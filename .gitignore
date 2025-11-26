@@ -1,0 +1,14 @@
+# Ambientes Virtuais (Virtual Environments)
+venv/
+.venv/
+env/
+.env/
+
+# Arquivos de banco de dados e temporários
+*.sqlite3 
+__pycache__/
+*.pyc
+
+# Logs de debug e arquivos específicos do seu SO/IDE (Opcional, mas recomendado)
+.DS_Store
+.vscode/
