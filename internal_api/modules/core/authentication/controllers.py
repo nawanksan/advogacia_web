@@ -3,7 +3,7 @@ from ninja_jwt.controller import NinjaJWTDefaultController
 
 
 @api_controller(
-    "/auth",
+    "/core/token",
     tags=["CORE - AUTH"]
 )
 class AuthController(NinjaJWTDefaultController):
