@@ -29,16 +29,18 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'ninja_jwt',
+    "ninja_extra",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'internal_api.modules.core.users'
-    'internal_api.modules.core.address'
+    'internal_api.modules.core.users',
+    'internal_api.modules.address',
+    'internal_api.modules.case',
 ]
 
 MIDDLEWARE = [
