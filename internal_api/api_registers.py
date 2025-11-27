@@ -2,12 +2,10 @@
 Local onde registra os controllers da aplicação interna
 para a implementação das rotas dos end-points.
 """
+from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
-# from ninja_extra.swagger import Swagger
-from ninja_jwt.authentication import JWTAuth
-
+from internal_api.modules.core.main.auth import JWTAuth
 from internal_api.modules.core.users.controllers import UserController
-from internal_api.modules.core.authentication.controllers import AuthController
 
 
 internal_api = NinjaExtraAPI(
@@ -26,7 +24,7 @@ internal_api = NinjaExtraAPI(
 
 # Módulo CORE
 internal_api.register_controllers(
-    AuthController,
+    TokenJWTControllers,
     UserController
 )
 

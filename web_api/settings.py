@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'internal_api.modules.core.users',
+    'internal_api.modules.core.token',
     'internal_api.modules.address',
     'internal_api.modules.case',
+    'internal_api.modules.employee',
 ]
 
 MIDDLEWARE = [
@@ -107,9 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Fortaleza'
 
 USE_I18N = True
 
@@ -125,3 +127,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# custom user model
+AUTH_USER_MODEL = 'users.CustomUsers'
+
+# login route
+PAIR_ROUTER_TOKEN = '/api/core/token/pair'
+

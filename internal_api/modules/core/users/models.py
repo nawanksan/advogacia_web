@@ -1,16 +1,28 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
-class Users(models.Model):
-    cpf: models.CharField = models.CharField(
-        verbose_name=_('CPF'),
-        max_length=11
+
+class CustomUsers(AbstractBaseUser, PermissionsMixin):
+    username: models.CharField = models.CharField(
+        verbose_name=_('Username'),
+        max_length=60,
+        unique=True,
     )
-    full_name: models.CharField = models.CharField(
-        verbose_name=_('Full Name'),
-        max_length=70
+    date_joined: models.DateTimeField = models.DateTimeField(
+        verbose_name=_('Join Date'),
+        auto_now_add=True,
     )
-    email: models.CharField = models.CharField(
-        verbose_name=_('Email')
+    employee: models.OneToOneField = models.OneToOneField(
+        to='employee.Employee',
+        blank=True,
+        null=True,
+        verbose_name=_('Employee User'),
+        related_name='user_employee_employee',
+        on_delete=models.RESTRICT,
     )
+
+    USERNAME_FIELD = 'username'
+
+    def __str__(self):
+        return self.email
