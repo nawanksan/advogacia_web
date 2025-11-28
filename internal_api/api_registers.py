@@ -5,7 +5,7 @@ para a implementação das rotas dos end-points.
 from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
 from internal_api.modules.core.main.auth import JWTAuth
-# from internal_api.modules.core.users.controllers import UserController
+from internal_api.modules.core.users.controllers import UserController
 
 
 internal_api = NinjaExtraAPI(
@@ -25,11 +25,17 @@ internal_api = NinjaExtraAPI(
 # Módulo CORE
 internal_api.register_controllers(
     TokenJWTControllers,
+    UserController
 )
 
 # Módulo ADDRESS
 # internal_api.register_controllers(
 #     AddressController,
+# )
+
+# # Módulo EMPLOYEE
+# internal_api.register_controllers(
+#     EmployeeController,
 # )
 
 # # Módulo CASE

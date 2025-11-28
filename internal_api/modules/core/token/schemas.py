@@ -1,11 +1,18 @@
+from typing import Optional
 from ninja import NinjaAPI, Schema
 from ninja_extra import api_controller
 # from internal_api.core.users.auth import CustomJWTAuth
 from pydantic import Field
 
 class UserLoginBase(Schema):
-    id: int
-    username: str
+    full_name: Optional[str] = Field(
+        None,
+        description='Nome completo'
+    )
+    employee_id: Optional[int] = Field(
+        None,
+        description='ID do funcionario'
+    )
 
 class CustomTokenObtainOutSchema(Schema):
     """
