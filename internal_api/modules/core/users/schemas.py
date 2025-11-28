@@ -12,11 +12,8 @@ class UserstOutSchema(Schema):
 
 
 class UsersInPostSchema(Schema):
-    id: int = Field(
-        ...,
-        description="ID do usuario"
-    )
     full_name: str = Field(
         ...,
         description="nome completo do usuario"
     )
+    

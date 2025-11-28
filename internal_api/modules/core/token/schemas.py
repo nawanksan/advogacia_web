@@ -6,7 +6,6 @@ from pydantic import Field
 class UserLoginBase(Schema):
     id: int
     username: str
-    email: str
 
 class CustomTokenObtainOutSchema(Schema):
     """

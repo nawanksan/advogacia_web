@@ -2,18 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
+from internal_api.modules.core.users.repositories import CustomUserManager
+
 
 class CustomUsers(AbstractBaseUser, PermissionsMixin):
-    username: models.CharField = models.CharField(
+    username = models.CharField(
         verbose_name=_('Username'),
         max_length=60,
         unique=True,
     )
-    date_joined: models.DateTimeField = models.DateTimeField(
+    date_joined = models.DateTimeField(
         verbose_name=_('Join Date'),
         auto_now_add=True,
     )
-    employee: models.OneToOneField = models.OneToOneField(
+    employee = models.OneToOneField(
         to='employee.Employee',
         blank=True,
         null=True,
@@ -22,7 +24,13 @@ class CustomUsers(AbstractBaseUser, PermissionsMixin):
         on_delete=models.RESTRICT,
     )
 
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return self.username

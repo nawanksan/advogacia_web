@@ -4,14 +4,17 @@ from django.utils.translation import gettext_lazy as _
 from ninja.errors import HttpError
 # from ninja_jwt.controller import NinjaJWTDefaultController
 
-class  JWTAuth(JWTAuth):
+class  CustomJWTAuth(JWTAuth):
 
     def authenticate(self, request, token):
         """
-        Aqui você autentica usando sua tabela User.
+        Autentica o usuário usando seu modelo CustomUsers.
         """
-        validated_token =  self.get_validated_token(token)
-        user = super().authenticate(request, token)
-        if not validated_token:
-            raise HttpError(401, _('Invalid token'))
-        return user
+        try:
+            # valida o token e pega o usuário
+            user = super().authenticate(request, token)
+            if not user:
+                raise HttpError(401, _("Invalid token or user does not exist"))
+            return user
+        except Exception:
+            raise HttpError(401, _("Invalid token"))
