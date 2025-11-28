@@ -19,6 +19,12 @@ class UserFilter(FilterSchema):
     
 class UsersList(ModelSchema):
 
+    employee_name: str = Field(
+        None,
+        alias='employee.full_name',
+        description="Nome completo do usuario"
+    )
+
     class Meta:
         model = CustomUsers
         fields = ['id', 'username', 'is_active']

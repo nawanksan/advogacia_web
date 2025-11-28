@@ -36,6 +36,7 @@ class Repository:
         return get_object_or_404(queryset, id=id)
 
 class Service:
+
     repository: Repository
 
     @classmethod
