@@ -116,5 +116,9 @@ class Service:
 
 
 class Controller:
+    """
+    Responsável por lidar com a comunicação entre a camada de apresentação
+    e a camada de serviço.
+    """
 
-    service = Service
+    service: Service

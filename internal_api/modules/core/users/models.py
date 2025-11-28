@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
-from internal_api.modules.core.users.repositories import CustomUserManager
+from internal_api.modules.core.users.user_manager import CustomUserManager
 
 
 class CustomUsers(AbstractBaseUser, PermissionsMixin):

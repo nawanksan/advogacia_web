@@ -4,6 +4,7 @@ from ninja import Query
 from django.db.models import QuerySet
 from ninja_extra import api_controller, route
 from internal_api.modules.core.users.schemas import UserFilter, UsersList, UserstOutSchema
+from internal_api.modules.core.users.services import UserService
 
 
 @api_controller(
@@ -12,7 +13,7 @@ from internal_api.modules.core.users.schemas import UserFilter, UsersList, Users
 )
 class UserController(Controller):
     
-    # service = UserService
+    service = UserService
     
     @route.get(
         'users/',
