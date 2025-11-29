@@ -8,4 +8,5 @@ class EmployeeService(Service):
     """
     Camada responsável pelas regras de negócio
     """
+
     repository = EmployeeRepository
