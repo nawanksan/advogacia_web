@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
 
@@ -47,6 +48,38 @@ class EmployeeOutSchema(Schema):
     id: int = Field(
         ...,
         description='ID do funcionário'
+    )
+    full_name: str = Field(
+        ...,
+        description='Nome completo'
+    )
+    cpf: str = Field(
+        ...,
+        description='CPF'
+    )
+    email: str = Field(
+        ...,
+        description='Email'
+    )
+    birth_date: date = Field(
+        ...,
+        description='Data de aniversário'
+    )
+    oab: str = Field(
+        None,
+        description='OAB do advogado'
+    )
+    oab_status: str = Field(
+        None,
+        description='Status do OAB'
+    )
+    specialty: str = Field(
+        None,
+        description='Status do OAB'
+    )
+    is_active: bool = Field(
+        ...,
+        description='Está ativo?'
     )
 
 class EmployeeInPost(ModelSchema):
