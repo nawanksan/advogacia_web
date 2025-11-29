@@ -8,5 +8,4 @@ class EmployeeRepository(Repository):
     """
     Camada responsável pela comunicação com o banco
     """
-
     model = Employee
