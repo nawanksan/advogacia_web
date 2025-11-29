@@ -6,4 +6,4 @@ from internal_api.modules.employee.models import Employee
 
 class EmployeeRepository(Repository):
 
-    models = Employee
+    model = Employee

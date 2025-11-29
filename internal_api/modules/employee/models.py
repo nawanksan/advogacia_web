@@ -44,6 +44,10 @@ class Employee(models.Model):
         verbose_name=_('Role'),
         related_name='employee_role_role',
     )
+    is_active: models.BooleanField = models.BooleanField(
+        verbose_name=_('Is Active'),
+        default=True
+    )
 
     class Meta:  # pylint: disable=missing-class-docstring
         ordering = ['full_name']

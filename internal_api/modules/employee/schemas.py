@@ -1,4 +1,7 @@
+from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
+
+from internal_api.modules.employee.models import Employee
 
 class EmployeeList(Schema):
     id: int = Field(
@@ -20,7 +23,6 @@ class EmployeeList(Schema):
     )
 
 class EmployeeFilter(FilterSchema):
-
     employee_id: int = Field(
         None,
         q='id__exact',
@@ -46,3 +48,29 @@ class EmployeeOutSchema(Schema):
         ...,
         description='ID do funcionário'
     )
+
+class EmployeeInPost(ModelSchema):
+    username: str = Field(None, description='Nome de usuário')
+    password: str = Field(None, description='senha do sistema')
+    role_id: int = Field(..., description='ID do cargo')
+    
+    class Meta:
+        model = Employee
+        exclude = [
+            'id',
+            'role',
+            'is_active'
+        ]
+
+class EmployeeInPut(ModelSchema):
+    username: Optional[str] = Field(None, description='Nome de usuário')
+    password: Optional[str] = Field(None, description='senha do sistema')
+    role_id: int = Field(..., description='ID do cargo')
+    
+    class Meta:
+        model = Employee
+        exclude = [
+            'id',
+            'role',
+            'is_active'
+        ]
