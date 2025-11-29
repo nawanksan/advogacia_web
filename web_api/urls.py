@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from internal_api.api_registers import internal_api
+from django.contrib.auth.decorators import login_required
 
 admin.site.site_header = "LAWMANAGER admin"
 admin.site.site_title = "LAWMANAGER admin"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', internal_api.urls)
+    path('api/', internal_api.urls),
+    # path("api/docs/", login_required(internal_api.get_swagger_view())),
 ]

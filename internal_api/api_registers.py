@@ -2,24 +2,27 @@
 Local onde registra os controllers da aplicação interna
 para a implementação das rotas dos end-points.
 """
+from ninja import Swagger
 from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
 from internal_api.modules.core.main.auth import JWTAuth
 from internal_api.modules.core.users.controllers import UserController
+from django.contrib.admin.views.decorators import  staff_member_required
 
 
 internal_api = NinjaExtraAPI(
     auth=JWTAuth(),
     title="Meu sistema Jurídico API",
     version="0.0.1",
+    docs_decorator=staff_member_required,
     description="API para gerenciamento de casos, usuarios",
-    # docs=Swagger(
-    #     settings={
-    #         "persistAuthorization": True,
-    #         "Filter": True,
-    #         "docExpansion": "none",
-    #     }
-    # )
+    docs=Swagger(
+        settings={
+            "persistAuthorization": True,
+            "Filter": True,
+            "docExpansion": "none",
+        }
+    )
 )
 
 # Módulo CORE

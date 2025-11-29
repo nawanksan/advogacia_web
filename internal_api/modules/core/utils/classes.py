@@ -11,6 +11,15 @@ from django.utils.translation import gettext_lazy as _
 class Repository:
 
     model: models.Model
+    
+    @classmethod
+    def update_payload(
+        cls,*,payload: Dict, **kwargs
+    ) -> Dict:
+        updated_payload: Dict ={
+            **payload
+        }
+        return updated_payload
 
     @classmethod
     def list(cls) -> models.QuerySet:
@@ -34,6 +43,46 @@ class Repository:
                 raise FieldError(f"{message}: {', '.join(invalid_fields)}")
         queryset: models.QuerySet = cls.model.objects.only(*only) if only else cls.model.objects.all()
         return get_object_or_404(queryset, id=id)
+    
+    def post(
+        cls, *, payload: Dict, last_user_id: int, **kwargs
+    ) -> models.Model:
+        """
+        Cria um registro.
+        """
+        payload = cls.update_payload(
+            payload=payload, **kwargs
+        )
+        return cls.model.objects.create(**payload)
+    
+    @classmethod
+    def put(
+        cls,
+        *,
+        instance: models.Model,
+        payload: Dict,
+        **kwargs,
+    ) -> models.Model:
+        """
+        Atualiza um registro.
+        """
+        if not isinstance(instance, cls.model):
+            raise Http404(
+                "The instance does not belong to the model."
+                f"{cls.model._meta.verbose_name}."
+            )
+
+        payload = cls.update_payload(
+            instance=instance,
+            payload=payload,
+            **kwargs,
+        )
+        for key, value in payload.items():
+            setattr(instance, key, value)
+        instance.save()
+
+        return instance
+
 
 class Service:
 
