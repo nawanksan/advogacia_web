@@ -39,11 +39,14 @@ class UserstOutSchema(Schema):
         description="Usarname"
     )
 
-
 class UsersInPostSchema(ModelSchema):
     full_name: str = Field(
         ...,
         description="nome completo do usuario"
+    )
+    password: str = Field(
+        ...,
+        description='Senha do usuário'
     )
 
     class Meta:

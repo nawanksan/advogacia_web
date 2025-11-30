@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from internal_api.modules.core.main.models import AbstractBaseModel
+from internal_api.modules.core.utils.choices import OAB_STATUS_CHOICES, TYPE_USER_EMPLOYER_CHOICES
+
 
 # Create your models here.
-class Employee(models.Model):
+class Employee(AbstractBaseModel):
     full_name: models.CharField = models.CharField(
         verbose_name=_('Full Name'),
         max_length=70,
@@ -14,8 +17,7 @@ class Employee(models.Model):
     )
     email: models.EmailField = models.EmailField(
         verbose_name=_('Email'),
-        blank=True,
-        null=True,
+        unique=True,
     )
     birth_date: models.DateField = models.DateField(
         verbose_name=_('Birth Date'),
@@ -27,26 +29,44 @@ class Employee(models.Model):
         blank=True,
     )
     oab: models.CharField = models.CharField(
-        verbose_name=_('Full Name'),
+        verbose_name=_('OAB'),
         max_length=50,
+        null=True,
+        blank=True
     )
     oab_status: models.CharField = models.CharField(
-        verbose_name=_('Full Name'),
-        max_length=50,
+        verbose_name=_('OAB Status'),
+        choices=OAB_STATUS_CHOICES,
+        max_length=2,
+        null=True,
+        blank=True,
     )
     specialty: models.CharField = models.CharField(
-        verbose_name=_('Full Name'),
+        verbose_name=_('Epecialty'),
         max_length=50,
+        null=True,
+        blank=True
+    )
+    type: models.CharField = models.CharField(
+        choices=TYPE_USER_EMPLOYER_CHOICES,
+        max_length=2,
+        default='CL',
+    )
+    address: models.ForeignKey = models.ForeignKey(
+        to='address.Address',
+        on_delete=models.RESTRICT,
+        verbose_name=_('Address'),
+        related_name='employee_address_address',
+        null=True,
+        blank=True
     )
     role: models.ForeignKey = models.ForeignKey(
         to='employee.Role',
         on_delete=models.RESTRICT,
         verbose_name=_('Role'),
         related_name='employee_role_role',
-    )
-    is_active: models.BooleanField = models.BooleanField(
-        verbose_name=_('Is Active'),
-        default=True
+        null=True,
+        blank=True
     )
 
     class Meta:  # pylint: disable=missing-class-docstring
@@ -55,16 +75,18 @@ class Employee(models.Model):
         verbose_name_plural = _('Employees')
 
     def __str__(self) -> str:
-        return f'{self.full_name} - {self.role.description}'
+        return f'{self.full_name} - {self.role.description if self.role else ""}'
 
 
-class Role(models.Model):
+class Role(AbstractBaseModel):
     name: models.CharField = models.CharField(
         verbose_name=_('Name'),
         max_length=50
     )
     description: models.CharField = models.CharField(
-        verbose_name=_('Description')
+        verbose_name=_('Description'),
+        max_length=255,
+        blank=True,
     )
 
 

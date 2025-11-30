@@ -1,9 +1,10 @@
 from ninja_extra import status
-from django.db import models, transaction
-from typing import Any, Dict, Tuple, Union
+from django.db import IntegrityError, models, transaction
+from typing import Any, Dict, Optional, Tuple, Union
 from internal_api.modules.core.utils.classes import Service
 from internal_api.modules.employee.repositories import EmployeeRepository
 from internal_api.modules.core.users.services import UserService
+from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 
 
 class EmployeeService(Service):
@@ -13,8 +14,100 @@ class EmployeeService(Service):
 
     repository = EmployeeRepository
     
-    # @classmethod
-    # def validate_payload(cls, *, payload, id = None, **kwargs):
+    @classmethod
+    def validate_payload(
+        cls,
+        *,
+        payload: Dict[str, Any],
+        id: Optional[int] = None, 
+        **kwargs
+    ) -> Tuple[int, Optional[models.Model | Dict[str, str]]]:
+        status_code: int
+        message: Dict
+        employee: Optional[models.Model]
+        full_name: str = remove_excess_spaces(
+            payload.get('full_name', '')
+        )
+        cpf: str = remove_excess_spaces(
+            payload.get('cpf')
+        )
+        email: str = remove_excess_spaces(
+            payload.get('email', '')
+        )
+        birth_date: str = payload.get('birth_date', '')
+        cellphone: str = payload.get('cellphone', '')
+        oab: Optional[str] = payload.get('oab', '')
+        oab_status: Optional[str] = payload.get('oab_status')
+        specialty: Optional[str] = payload.get('specialty', '')
+        
+        # status_code, role_or_message = RoleService.get(
+        #     id=payload.get('role_id', None)
+        # )
+        # if status_code != status.HTTP_200_OK:
+        #     message = role_or_message
+        #     return status_code, message
+
+        # role: Any = role_or_message
+        filter_by_cpf: Any = cls.list().filter(cpf=cpf, is_active=True)
+        filter_by_email: Any = cls.list().filter(email=email, is_active=True)
+        
+        if id is not None:
+            status_code, employee_or_message = cls.get(id=id)
+            if status_code != status.HTTP_200_OK:
+                message = employee_or_message
+                return message
+            
+            employee: Any = employee_or_message
+
+            if not employee.is_active:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'Funcionário inativo, '
+                        'não é possível mudar suas informações'
+                    )
+                }
+
+                
+            if filter_by_cpf.exclude(id=id).exict():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'Já existe um funcionário com o e-mail informado'
+                    )
+                }
+
+            if filter_by_email.exclude(id=id).exict():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'E-mail já cadastrado'
+                    )
+                }
+                
+        else:
+            if filter_by_cpf.exclude(id=id).exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'CPF já cadastrado'
+                    )
+                }
+
+            if filter_by_email.exclude(id=id).exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'Já existe um funcionário com o e-mail informado'
+                    )
+                }
+                
+        
+        if not birth_date:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Informa a data de aniversário'
+            }
+            
+        if not email:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Informa o email de aniversário'
+            }
+            
     
     @classmethod
     def post(
@@ -37,7 +130,7 @@ class EmployeeService(Service):
                 status_code, message_or_object = cls.validate_payload(
                     payload=payload
                 )
-                
+
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
                     return message
@@ -65,3 +158,42 @@ class EmployeeService(Service):
             return status.HTTP_500_INTERNAL_SERVER_ERROR, {
                 'message': f'Error! {str(error)}'
             }
+
+    @classmethod
+    def put(
+        cls,
+        *,
+        payload: Dict[str, Any],
+        **kwargs
+    ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
+        status_code: int
+        message_or_object: str
+                
+                # request = kwargs.get('request', None)
+                
+        status_code, message_or_object = cls.validate_payload(
+            payload=payload
+        )
+
+        if status_code != status.HTTP_200_OK:
+            message = message_or_object
+            return message
+                
+        username = payload.pop('username')
+        password = payload.pop('password')
+                
+        instance = EmployeeRepository.put(
+            payload=payload
+        )
+                
+        if username != '':
+            status_code, message_or_object = UserService.put(
+                employee=instance,
+                payload={'usename': username, 'password': password}
+            )
+
+            if status_code != status.HTTP_200_OK:
+                message = message_or_object
+                return message
+                    
+        return status.HTTP_200_OK, instance

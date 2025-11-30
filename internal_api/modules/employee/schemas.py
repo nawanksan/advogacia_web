@@ -1,7 +1,6 @@
 from datetime import date
 from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
-
 from internal_api.modules.employee.models import Employee
 
 class EmployeeList(Schema):
@@ -72,6 +71,10 @@ class EmployeeOutSchema(Schema):
     oab_status: str = Field(
         None,
         description='Status do OAB'
+    )
+    type: str = Field(
+        ...,
+        description=('tipo de usuario')
     )
     specialty: str = Field(
         None,
