@@ -23,6 +23,11 @@ class NeighborhoodRepository(Repository):
 
 
 class AddressRepository(Repository):
+    """
+    Responsável por lidar com a persistência e interação
+    com a camada de armazenamento de dados, relacionados
+    ao submódulo de endereço.
+    """
 
     model = Address
 
