@@ -37,8 +37,9 @@ class EmployeeService(Service):
         birth_date: str = payload.get('birth_date', '')
         cellphone: str = payload.get('cellphone', '')
         oab: Optional[str] = payload.get('oab', '')
-        oab_status: Optional[str] = payload.get('oab_status')
+        oab_status: Optional[str] = payload.get('oab_status', '')
         specialty: Optional[str] = payload.get('specialty', '')
+        type_person: str = payload.get('type')
         
         # status_code, role_or_message = RoleService.get(
         #     id=payload.get('role_id', None)
@@ -71,14 +72,14 @@ class EmployeeService(Service):
             if filter_by_cpf.exclude(id=id).exict():
                 return status.HTTP_400_BAD_REQUEST, {
                     'message': (
-                        'Já existe um funcionário com o e-mail informado'
+                        'Já existe um cadastro com o CPF informado'
                     )
                 }
 
             if filter_by_email.exclude(id=id).exict():
                 return status.HTTP_400_BAD_REQUEST, {
                     'message': (
-                        'E-mail já cadastrado'
+                        'Já existe um cadastro com o e-mail informado'
                     )
                 }
                 
@@ -93,10 +94,14 @@ class EmployeeService(Service):
             if filter_by_email.exclude(id=id).exists():
                 return status.HTTP_400_BAD_REQUEST, {
                     'message': (
-                        'Já existe um funcionário com o e-mail informado'
+                        'Já existe um cadastro com o e-mail informado'
                     )
                 }
-                
+
+        if not full_name:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Informa a data de aniversário'
+            } 
         
         if not birth_date:
             return status.HTTP_400_BAD_REQUEST, {
@@ -107,6 +112,40 @@ class EmployeeService(Service):
             return status.HTTP_400_BAD_REQUEST, {
                 'message': 'Informa o email de aniversário'
             }
+        
+        if not type_person:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Informa o tipo de pessoa de aniversário'
+            }
+        
+        if cellphone > 11:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'O número de contato'
+                ' deve ter no máximo 11 caracteres'
+            }
+        
+        if type_person == 'AD' and not oab:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'o OAB é obrigatório'
+                ' para advogados'
+            }
+        
+        if type_person == 'AD' and not specialty:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'A especialidade é obrigatória'
+                ' para advogados'
+            }
+        
+        if type_person != 'AD' and oab:
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'o OAB é somente'
+                ' para advogados'
+            }
+        
+        # if oab_status == in ['IN', 'SU']:
+        #     return status.HTTP_400_BAD_REQUEST, {
+        #         'message': 'o OAB inválido'
+        #     }
             
     
     @classmethod
@@ -119,14 +158,14 @@ class EmployeeService(Service):
         """
         Método responsável por criar um funcionário.
         """
-        
+
         try:
             with transaction.atomic():
                 status_code: int
                 message_or_object: str
-                
+
                 # request = kwargs.get('request', None)
-                
+
                 status_code, message_or_object = cls.validate_payload(
                     payload=payload
                 )
@@ -134,26 +173,50 @@ class EmployeeService(Service):
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
                     return message
+
+                username = remove_excess_spaces(
+                    payload.get('username')
+                )
+                password = remove_excess_spaces(
+                    payload.get('password')
+                )
+
+                # if not username:
+                #     return status.HTTP_400_BAD_REQUEST, {
+                #         'message': (
+                #             'O nome de usuário é obrigatório'
+                #         )
+                #     }
                 
-                username = payload.pop('username')
-                password = payload.pop('password')
+                # if username and username > 60:
+                #     return status.HTTP_400_BAD_REQUEST, {
+                #         'message': (
+                #             'O nome de usuário é obrigatório'
+                #         )
+                #     }
                 
+                # if not password:
+                #     return status.HTTP_400_BAD_REQUEST, {
+                #         'message': (
+                #             'A senha é obrigatória'
+                #         )
+                #     }
+
                 instance = EmployeeRepository.post(
                     payload=payload
                 )
-                
-                if username != '':
-                    status_code, message_or_object = UserService.post(
-                        employee=instance,
-                        payload={'usename': username, 'password': password}
-                    )
-                    
-                    if status_code != status.HTTP_200_OK:
-                        message = message_or_object
-                        return message
-                    
+
+                status_code, message_or_object = UserService.post(
+                    employee=instance,
+                    payload={'usename': username, 'password': password}
+                )
+
+                if status_code != status.HTTP_200_OK:
+                    message = message_or_object
+                    return message
+
                 return status.HTTP_201_CREATED, instance
-            
+
         except IntegrityError as error:
             return status.HTTP_500_INTERNAL_SERVER_ERROR, {
                 'message': f'Error! {str(error)}'

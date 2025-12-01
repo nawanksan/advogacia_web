@@ -89,12 +89,17 @@ class EmployeeInPost(ModelSchema):
     username: str = Field(None, description='Nome de usuário')
     password: str = Field(None, description='senha do sistema')
     role_id: int = Field(..., description='ID do cargo')
-    
+    # address_id: AddressInPost = Field(
+    #     ...,
+    #     description='Endereço'
+    # )
+
     class Meta:
         model = Employee
         exclude = [
             'id',
             'role',
+            # 'address'
             'is_active'
         ]
 
@@ -102,11 +107,16 @@ class EmployeeInPut(ModelSchema):
     username: Optional[str] = Field(None, description='Nome de usuário')
     password: Optional[str] = Field(None, description='senha do sistema')
     role_id: int = Field(..., description='ID do cargo')
+    # address_id: AddressInPost = Field(
+    #     ...,
+    #     description='Endereço'
+    # )
     
     class Meta:
         model = Employee
         exclude = [
             'id',
             'role',
+            # 'address'
             'is_active'
         ]

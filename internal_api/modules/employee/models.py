@@ -52,14 +52,14 @@ class Employee(AbstractBaseModel):
         max_length=2,
         default='CL',
     )
-    address: models.ForeignKey = models.ForeignKey(
-        to='address.Address',
-        on_delete=models.RESTRICT,
-        verbose_name=_('Address'),
-        related_name='employee_address_address',
-        null=True,
-        blank=True
-    )
+    # address: models.ForeignKey = models.ForeignKey(
+    #     to='address.Address',
+    #     on_delete=models.RESTRICT,
+    #     verbose_name=_('Address'),
+    #     related_name='employee_address_address',
+    #     null=True,
+    #     blank=True
+    # )
     role: models.ForeignKey = models.ForeignKey(
         to='employee.Role',
         on_delete=models.RESTRICT,
