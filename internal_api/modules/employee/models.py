@@ -47,19 +47,14 @@ class Employee(AbstractBaseModel):
         null=True,
         blank=True
     )
-    type: models.CharField = models.CharField(
-        choices=TYPE_USER_EMPLOYER_CHOICES,
-        max_length=2,
-        default='CL',
+    address: models.ForeignKey = models.ForeignKey(
+        to='address.Address',
+        on_delete=models.RESTRICT,
+        verbose_name=_('Address'),
+        related_name='employee_address_address',
+        null=True,
+        blank=True
     )
-    # address: models.ForeignKey = models.ForeignKey(
-    #     to='address.Address',
-    #     on_delete=models.RESTRICT,
-    #     verbose_name=_('Address'),
-    #     related_name='employee_address_address',
-    #     null=True,
-    #     blank=True
-    # )
     role: models.ForeignKey = models.ForeignKey(
         to='employee.Role',
         on_delete=models.RESTRICT,
@@ -68,6 +63,14 @@ class Employee(AbstractBaseModel):
         null=True,
         blank=True
     )
+    # group_company: models.ForeignKey = models.ForeignKey(
+    #     to='group_company.GroupCompany',
+    #     on_delete=models.RESTRICT,
+    #     verbose_name=_('Role'),
+    #     related_name='employee_role_role',
+    #     null=True,
+    #     blank=True
+    # )
 
     class Meta:  # pylint: disable=missing-class-docstring
         ordering = ['full_name']

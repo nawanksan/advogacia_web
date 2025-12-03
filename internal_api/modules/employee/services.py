@@ -39,7 +39,6 @@ class EmployeeService(Service):
         oab: Optional[str] = payload.get('oab', '')
         oab_status: Optional[str] = payload.get('oab_status', '')
         specialty: Optional[str] = payload.get('specialty', '')
-        type_person: str = payload.get('type')
         
         # status_code, role_or_message = RoleService.get(
         #     id=payload.get('role_id', None)
@@ -113,33 +112,10 @@ class EmployeeService(Service):
                 'message': 'Informa o email de aniversário'
             }
         
-        if not type_person:
-            return status.HTTP_400_BAD_REQUEST, {
-                'message': 'Informa o tipo de pessoa de aniversário'
-            }
-        
         if cellphone > 11:
             return status.HTTP_400_BAD_REQUEST, {
                 'message': 'O número de contato'
                 ' deve ter no máximo 11 caracteres'
-            }
-        
-        if type_person == 'AD' and not oab:
-            return status.HTTP_400_BAD_REQUEST, {
-                'message': 'o OAB é obrigatório'
-                ' para advogados'
-            }
-        
-        if type_person == 'AD' and not specialty:
-            return status.HTTP_400_BAD_REQUEST, {
-                'message': 'A especialidade é obrigatória'
-                ' para advogados'
-            }
-        
-        if type_person != 'AD' and oab:
-            return status.HTTP_400_BAD_REQUEST, {
-                'message': 'o OAB é somente'
-                ' para advogados'
             }
         
         # if oab_status == in ['IN', 'SU']:

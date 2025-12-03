@@ -23,6 +23,7 @@ class CustomUsers(AbstractBaseUser, PermissionsMixin):
         related_name='user_employee_employee',
         on_delete=models.RESTRICT,
     )
+    is_staff = models.BooleanField(default=False)
     is_active: models.BooleanField = models.BooleanField(
         verbose_name=_('Active'),
         default=True,

@@ -4,7 +4,7 @@ from django.db import models
 from django.http import Http404
 
 from internal_api.modules.core.utils import remove_excess_spaces
-from core.utils.classes import Repository
+from internal_api.modules.core.utils.classes import Repository
 from .models import Address,Neighbordhood, City, FederativeUnit ,AbstractBaseModel
 
 

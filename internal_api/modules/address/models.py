@@ -1,7 +1,24 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from advogacia_web.internal_api.modules.core.main.models import AbstractBaseModel
+from internal_api.modules.core.main.models import AbstractBaseModel
 
+class Country(AbstractBaseModel):
+    name: models.CharField = models.CharField(
+        verbose_name=_('Name'),
+        max_length=30
+    )
+    abbreviation: models.CharField = models.CharField(
+        verbose_name=_('Abbreviation'),
+        max_length=2
+    )
+
+    class Meta:  # pylint: disable=missing-class-docstring
+        ordering = ['-id']
+        verbose_name = _('Country')
+        verbose_name_plural = _('Countrys')
+
+    def __str__(self):
+        return f'{self.name} - {self.abbreviation}'
 
 class FederativeUnit(AbstractBaseModel):
     name: models.CharField = models.CharField(
@@ -13,7 +30,7 @@ class FederativeUnit(AbstractBaseModel):
         max_length=2
     )
     country: models.ForeignKey = models.ForeignKey(
-        to='addresses.Country',
+        to='address.Country',
         on_delete=models.RESTRICT,
         verbose_name=_('Country'),
         related_name='federativeunit_country_country',

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -107,6 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+NINJA_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),   # Token dura 3 horas
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh dura 1 dia
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -139,4 +146,3 @@ AUTHENTICATION_BACKENDS = [
 
 # login route
 PAIR_ROUTER_TOKEN = '/api/core/token/pair'
-
