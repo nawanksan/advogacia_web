@@ -47,7 +47,7 @@ class Employee(AbstractBaseModel):
         null=True,
         blank=True
     )
-    address: models.ForeignKey = models.ForeignKey(
+    address: models.OneToOneField = models.OneToOneField(
         to='address.Address',
         on_delete=models.RESTRICT,
         verbose_name=_('Address'),

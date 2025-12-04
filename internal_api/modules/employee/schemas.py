@@ -1,6 +1,7 @@
 from datetime import date
 from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
+from internal_api.modules.address.schemas import AddressInPost
 from internal_api.modules.employee.models import Employee
 
 class EmployeeList(Schema):
@@ -89,17 +90,16 @@ class EmployeeInPost(ModelSchema):
     username: str = Field(None, description='Nome de usuário')
     password: str = Field(None, description='senha do sistema')
     role_id: int = Field(..., description='ID do cargo')
-    # address_id: AddressInPost = Field(
-    #     ...,
-    #     description='Endereço'
-    # )
+    address: AddressInPost = Field(
+        ...,
+        description='Endereço'
+    )
 
     class Meta:
         model = Employee
         exclude = [
             'id',
             'role',
-            # 'address'
             'is_active'
         ]
 

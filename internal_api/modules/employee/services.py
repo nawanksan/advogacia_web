@@ -1,6 +1,7 @@
 from ninja_extra import status
 from django.db import IntegrityError, models, transaction
 from typing import Any, Dict, Optional, Tuple, Union
+from internal_api.modules.address.services import AddressService
 from internal_api.modules.core.utils.classes import Service
 from internal_api.modules.employee.repositories import EmployeeRepository
 from internal_api.modules.core.users.services import UserService
@@ -139,11 +140,24 @@ class EmployeeService(Service):
             with transaction.atomic():
                 status_code: int
                 message_or_object: str
+                address_payload: Dict = payload.pop('address', {})
 
                 # request = kwargs.get('request', None)
 
                 status_code, message_or_object = cls.validate_payload(
                     payload=payload
+                )
+
+                if status_code != status.HTTP_200_OK:
+                    message = message_or_object
+                    return message
+                
+                status_code, message_or_object = AddressService.validate_payload(
+                    payload=address_payload
+                )
+
+                status_code, message_or_object = AddressService.post(
+                    payload=address_payload
                 )
 
                 if status_code != status.HTTP_200_OK:
