@@ -169,12 +169,17 @@ class AddressInPost(ModelSchema):
         ...,
         description='ID do bairro'
     )
+    complements: Optional[str] = Field(
+        None,
+        description='Complemento'
+    )
 
     class Meta:
         model = Address
         exclude = [
             'id',
-            'neighbordhood'
+            'neighbordhood',
+            'is_active'
         ]
 
 

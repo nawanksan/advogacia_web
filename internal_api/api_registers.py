@@ -3,7 +3,7 @@ Local onde registra os controllers da aplicação interna
 para a implementação das rotas dos end-points.
 """
 from internal_api.modules.address.controllers import AddressController
-from internal_api.modules.employee.controllers import EmployeeController
+from internal_api.modules.employee.controllers import EmployeeController, RoleController
 from ninja import Swagger
 from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
@@ -41,6 +41,7 @@ internal_api.register_controllers(
 # Módulo EMPLOYEE
 internal_api.register_controllers(
     EmployeeController,
+    RoleController
 )
 
 # # Módulo CASE
