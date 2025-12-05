@@ -17,9 +17,6 @@ class FederativeUnitService(Service):
 
     repository = FederativeUnitRepository
 
-    # -------------------------------
-    # VALIDATE PAYLOAD
-    # -------------------------------
     @classmethod
     def validate_payload(
         cls, *, payload: Dict[str, Any], id: Optional[int] = None
@@ -52,9 +49,6 @@ class FederativeUnitService(Service):
 
         return status.HTTP_200_OK, None
 
-    # -------------------------------
-    # POST
-    # -------------------------------
     @classmethod
     def post(
         cls, *, payload: Dict[str, Any], last_user_id: int

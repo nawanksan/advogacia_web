@@ -8,7 +8,7 @@ from ninja_jwt.tokens import RefreshToken
 
 @api_controller(
     'core/',
-    tags=['CORE - TOKEN'],
+    tags=['CORE - USERS'],
     auth=None
 )
 class TokenJWTControllers(ControllerBase):

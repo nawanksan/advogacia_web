@@ -88,14 +88,11 @@ class EmployeeController(Controller):
     def desable(
         self,
         request,
-        id: int,
-        payload: EmployeeInPut
+        id: int
     ) -> Tuple[Any, ...]:
         
         return self.service.put(
-            id=id,
-            payload=payload.dict(),
-            request=request,
+            id=id
         )
         
 @api_controller(
