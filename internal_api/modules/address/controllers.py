@@ -12,6 +12,157 @@ from internal_api.modules.core.utils.constants import ERROR_STATUSES, SUCCESS_ST
 
 
 @api_controller(
+    'core/addresses/',
+    tags=['CORE - ADDRESSES'],
+
+)
+class CountryController(Controller):
+    """
+    Responsável por controlar as requisições relacionadas ao submódulo de país,
+    a qual as recebe e coordena as ações necessárias.
+    """
+
+    service: CountryServices = CountryServices
+
+    @route.get(
+        'country/',
+        response=PaginatedResponseSchema[CountryList],
+        permissions=[
+            GetAddressesAccess
+            | PostClientsAccess
+            | PutClientsAccess
+            | PostGroupCompaniesAccess
+            | PutGroupCompaniesAccess
+            | PostUrbanCleaningRouteAccess
+            | PutUrbanCleaningRouteAccess
+            | PostEmployeesAccess
+            | PutEmployeesAccess,
+        ],
+    )
+    @paginate(CustomPagination)
+    @ordering(
+        Ordering,
+        ordering_fields=[
+            'id',
+            'name',
+            'abbreviation',
+        ],
+    )
+    def list(
+        self,
+        filters: CountryFilter = Query(...),
+    ) -> QuerySet[Any]:
+        """
+        Rota responsável por fazer a listagem de países.
+        ----------------------------------------------
+
+            **Campos de ordenação:**
+
+                - id
+
+                - name
+
+                - abbreviation
+
+                Para ordenar por um campo específico de forma crescente,
+                basta passar o nome do campo como parâmetro na requisição.
+
+                *Exemplo: .../country/?ordering=id*
+
+                Para ordenação decrescente, basta passar o nome do campo com o prefixo "-" (hífen).
+
+                *Exemplo: .../country/?ordering=-id*
+        """  # noqa: E501
+        return self.service.list(filters=filters)
+
+    @route.get(
+        'country/{int:id}',
+        response={
+            SUCCESS_STATUSES: CountryOut,
+            ERROR_STATUSES: MessageSchema,
+        },
+        permissions=[
+            GetAddressesAccess,
+        ],
+    )
+    def get(
+        self,
+        id: int,
+    ) -> Tuple[Any, ...]:
+        """
+        Rota responsável por detalhar um país.
+        --------------------------------------
+        """
+        return self.service.get(id=id)
+
+    @route.post(
+        'country/',
+        response={
+            SUCCESS_STATUSES: CountryOut,
+            ERROR_STATUSES: MessageSchema,
+        },
+        permissions=[PostAddressesAccess],
+    )
+    def post(self, request, payload: CountryInPost) -> Tuple[Any, ...]:
+        """
+        Rota responsável por criar um país.
+        -----------------------------------
+        -  abbreviation: A sigla permite apenas 3 letras;
+        """
+        return self.service.post(
+            payload=payload.dict(),
+            last_user_id=request.user.id,
+        )
+
+    @route.put(
+        'country/{int:id}',
+        response={
+            SUCCESS_STATUSES: CountryOut,
+            ERROR_STATUSES: MessageSchema,
+        },
+        permissions=[PutAddressesAccess],
+    )
+    def put(
+        self,
+        request,
+        id: int,
+        payload: CountryInPut,
+    ) -> Tuple[Any, ...]:
+        """
+        Rota responsável por atualizar um país.
+        --------------------------------------
+        -  abbreviation: A sigla permite apenas 3 letras;
+        """
+        return self.service.put(
+            id=id,
+            payload=payload.dict(),
+            last_user_id=request.user.id,
+        )
+
+    @route.patch(
+        'country/{int:id}/disable/',
+        response={
+            SUCCESS_STATUSES: CountryOut,
+            ERROR_STATUSES: MessageSchema,
+        },
+        permissions=[DisabledAddressesAccess],
+    )
+    def disable(
+        self,
+        request,
+        id: int,
+    ) -> Tuple[Any, ...]:
+        """
+        Rota responsável por desabilitar um país.
+        -----------------------------------------
+        """
+        return self.service.disable(
+            id=id,
+            last_user_id=request.user.id,
+        )
+
+
+@api_controller(
     'address/federative-Unit',
     tags=['ADDRESS - ADDRESS']
 )
