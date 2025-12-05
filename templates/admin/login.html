@@ -1,0 +1,57 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+
+<script type="text/javascript">
+
+    function showErrorMessage(message) {
+        const div = document.createElement("div");
+        div.className = "errornote";
+        div.innerHTML = message;
+        document.querySelector("#content").insertBefore(div, document.querySelector("#content").firstChild);
+        document.querySelectorAll(".errornote").forEach(function (el) {
+            if (el !== div) {
+                el.remove();
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        localStorage.removeItem("authorized");
+
+        const form = document.querySelector("#login-form");
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+
+            const username = form.querySelector("input[name='username']").value;
+            const password = form.querySelector("input[name='password']").value;
+            const csrftoken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+
+            fetch("/api/v1/core/token/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({ username, password }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        localStorage.setItem("authorized", JSON.stringify({ JWTAuth: { value: data.token } }));
+                        form.submit();
+                    } else {
+                        showErrorMessage(data.detail || data.message);
+                    }
+                })
+                .catch(error => {
+                    showErrorMessage(error.message);
+                });
+        };
+    });
+
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+    function loadScript(appLabel, model, id) {
+        const url = `{% static 'js/' %}${appLabel}/${model}.js`;
+
+        $.ajax({
+            url: url,
+            type: 'HEAD',
+            success: () => {
+                const script = document.createElement("script");
+        
+                script.type = "text/javascript";
+                script.src = url;
+                script.id = "helper";
+        
+                script.setAttribute("data-app-label", appLabel);
+                script.setAttribute("data-model", model);
+                script.setAttribute("data-id", id);
+                
+                document.head.appendChild(script);
+                console.log("Script loaded");
+            },
+            error: () => {
+                console.log("Script not found");
+            }
+        });
+    }
+    
+    $(function () {
+        const currentPath = window.location.pathname;
+        
+        const pattern = /\/admin\/(\w+)\/(\w+)\/(?:add|(\d+)\/change)\//;
+        const match = currentPath.match(pattern);
+        if (!match) return;
+        
+        const appLabel = match[1];
+        const model = match[2];
+        const id = match[3];
+        
+        const jwtToken = JSON.parse(localStorage.getItem("authorized")).JWTAuth.value;
+        $.ajaxSetup({ headers : {"Authorization" : `Bearer ${jwtToken}`} });
+
+        loadScript(appLabel, model, id);
+    });
+
+    </script>
+{% endblock %}

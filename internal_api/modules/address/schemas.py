@@ -2,7 +2,75 @@ from datetime import date
 from typing import List, Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
 
-from internal_api.modules.address.models import Address, City, FederativeUnit, Neighbordhood
+from internal_api.modules.address.models import Address, City, Country, FederativeUnit, Neighbordhood
+
+class CountryFilter(FilterSchema):
+    """
+    Schema responsável por mostrar campos de filtragem de países.
+    """
+
+    country_id: int = Field(None, q="id__exact", description="ID do país")
+    name: str = Field(None, q="name__istartswith", description="Nome do país")
+    is_active: bool = Field(None, q="is_active", description="Está ativo?")
+
+
+class CountryInPost(ModelSchema):
+    """
+    Schema responsável por armazenar os campos de entrada de países.
+        - name: Nome do país;
+        - abbreviation: Abreviação do país;
+    """
+
+    class Meta:  # pylint: disable=missing-class-docstring
+        model = Country
+        fields = [
+            "name",
+            "abbreviation",
+        ]
+
+
+class CountryInPut(ModelSchema):
+    """
+    Schema responsável por armazenar os campos de atualização de países.
+        - name: Nome do país
+        - abbreviation: Abreviação do país;
+    """
+
+    class Meta:  # pylint: disable=missing-class-docstring
+        model = Country
+        fields = [
+            "name",
+            "abbreviation",
+        ]
+
+
+class CountryList(Schema):
+    """
+    Schema responsável por listar os campos de países.
+    """
+
+    id: int = Field(..., description="ID do país")
+    name: str = Field(..., description="Nome do país")
+    abbreviation: str = Field(..., description="Abreviação do país")
+    is_active: bool = Field(..., description="Está ativo?")
+
+
+class CountryOut(ModelSchema):
+    """
+    Schema responsável por mostrar os campos de saída de países.
+        - id: ID do país;
+        - name: Nome do país;
+        - abbreviation: Abreviação do país;
+        - is_active: Está ativo?
+    """
+
+    class Meta:  # pylint: disable=missing-class-docstring
+        model = Country
+        exclude = [
+            "last_user",
+            "registration",
+            "last_modification",
+        ]
 
 class FederativeUnitList(Schema):
     """Schema responsável por listar unidades federativas."""

@@ -5,6 +5,7 @@ from ninja_extra import status
 
 from internal_api.modules.core.utils.classes import Service
 from internal_api.modules.address.repositories import (
+    CountryRepository,
     FederativeUnitRepository,
     CityRepository,
     NeighborhoodRepository,
@@ -12,6 +13,94 @@ from internal_api.modules.address.repositories import (
 )
 from internal_api.modules.core.utils import remove_excess_spaces
 
+class CountryServices(Service):
+    
+    repository = CountryRepository
+
+    @classmethod
+    def validate_payload(  # noqa: PLR0911, PLR0912
+        cls,
+        *,
+        payload: Dict[str, Any],
+        id: Optional[int] = None,
+        **kwargs,
+    ) -> Tuple[int, Optional[models.Model | Dict[str, str]]]:
+        """
+        Método responsável por implementar as regras
+        de negócio do submódulo de país.
+        """
+        status_code: int
+        message: Dict
+        country: Optional[models.Model] = None
+        django_admin: Optional[bool] = kwargs.get('django_admin', False)
+
+        get_name: str = remove_excess_spaces(payload.get('name', '')).upper()
+        if get_name == '':  # noqa: PLC1901
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Nome do país não pode ser vazio.'
+            }
+
+        get_abbreviation: str = remove_excess_spaces(
+            payload.get('abbreviation', '')
+        ).upper()
+        if get_abbreviation == '':  # noqa: PLC1901
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Sigla do país não pode ser vazia.'
+            }
+
+        if (
+            len(get_abbreviation.strip()) != 3  # noqa: PLR2004
+            or not get_abbreviation.isalpha()
+        ):
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': 'Sigla deve possuir exatamente três letras.'
+            }
+
+        country_list = cls.list()
+        country_filter_name = country_list.filter(
+            name=get_name, is_active=True
+        )
+        country_filter_abbreviation = country_list.filter(
+            abbreviation=get_abbreviation, is_active=True
+        )
+        if id is not None:
+            status_code, country_or_message = cls.get(id=id)
+            if status_code != status.HTTP_200_OK:
+                message = country_or_message
+                return status_code, message
+
+            country: Any = country_or_message
+
+            if not country.is_active and not django_admin:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'País inativo, não é possível '
+                        'modificar suas informações.'
+                    )
+                }
+
+            if country_filter_name.exclude(id=id).exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Já existe este país.'
+                }
+
+            if country_filter_abbreviation.exclude(id=id).exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Já existe esta sigla.'
+                }
+
+        else:
+            if country_filter_name.exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Já existe este país.'
+                }
+
+            if country_filter_abbreviation.exists():
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Já existe esta sigla.'
+                }
+
+        return status.HTTP_200_OK, country
 
 class FederativeUnitService(Service):
 
