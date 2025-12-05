@@ -4,16 +4,16 @@ from django.db.models import QuerySet
 from ninja import Query
 
 
-from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
-from internal_api.modules.address.services import AddressService, CityService, FederativeUnitService, NeighborhoodService
-from internal_api.modules.core.main.schemas import MessageSchema
+from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, CountryFilter, CountryInPost, CountryInPut, CountryList, CountryOut, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
+from internal_api.modules.address.services import AddressService, CityService, CountryServices, FederativeUnitService, NeighborhoodService
+from internal_api.modules.core.main.schemas import MessageSchema, PaginatedResponseSchema
 from internal_api.modules.core.utils.classes import Controller
 from internal_api.modules.core.utils.constants import ERROR_STATUSES, SUCCESS_STATUSES
 
 
 @api_controller(
     'core/addresses/',
-    tags=['CORE - ADDRESSES'],
+    tags=['ADDRESS - ADDRESS'],
 
 )
 class CountryController(Controller):
@@ -22,32 +22,32 @@ class CountryController(Controller):
     a qual as recebe e coordena as ações necessárias.
     """
 
-    service: CountryServices = CountryServices
+    service: CountryServices
 
     @route.get(
         'country/',
         response=PaginatedResponseSchema[CountryList],
-        permissions=[
-            GetAddressesAccess
-            | PostClientsAccess
-            | PutClientsAccess
-            | PostGroupCompaniesAccess
-            | PutGroupCompaniesAccess
-            | PostUrbanCleaningRouteAccess
-            | PutUrbanCleaningRouteAccess
-            | PostEmployeesAccess
-            | PutEmployeesAccess,
-        ],
+        # permissions=[
+        #     GetAddressesAccess
+        #     | PostClientsAccess
+        #     | PutClientsAccess
+        #     | PostGroupCompaniesAccess
+        #     | PutGroupCompaniesAccess
+        #     | PostUrbanCleaningRouteAccess
+        #     | PutUrbanCleaningRouteAccess
+        #     | PostEmployeesAccess
+        #     | PutEmployeesAccess,
+        # ],
     )
-    @paginate(CustomPagination)
-    @ordering(
-        Ordering,
-        ordering_fields=[
-            'id',
-            'name',
-            'abbreviation',
-        ],
-    )
+    # @paginate(CustomPagination)
+    # @ordering(
+    #     Ordering,
+    #     ordering_fields=[
+    #         'id',
+    #         'name',
+    #         'abbreviation',
+    #     ],
+    # )
     def list(
         self,
         filters: CountryFilter = Query(...),
@@ -81,9 +81,9 @@ class CountryController(Controller):
             SUCCESS_STATUSES: CountryOut,
             ERROR_STATUSES: MessageSchema,
         },
-        permissions=[
-            GetAddressesAccess,
-        ],
+        # permissions=[
+        #     GetAddressesAccess,
+        # ],
     )
     def get(
         self,
@@ -101,7 +101,7 @@ class CountryController(Controller):
             SUCCESS_STATUSES: CountryOut,
             ERROR_STATUSES: MessageSchema,
         },
-        permissions=[PostAddressesAccess],
+        # permissions=[PostAddressesAccess],
     )
     def post(self, request, payload: CountryInPost) -> Tuple[Any, ...]:
         """
@@ -120,7 +120,7 @@ class CountryController(Controller):
             SUCCESS_STATUSES: CountryOut,
             ERROR_STATUSES: MessageSchema,
         },
-        permissions=[PutAddressesAccess],
+        # permissions=[PutAddressesAccess],
     )
     def put(
         self,
@@ -145,7 +145,7 @@ class CountryController(Controller):
             SUCCESS_STATUSES: CountryOut,
             ERROR_STATUSES: MessageSchema,
         },
-        permissions=[DisabledAddressesAccess],
+        # permissions=[DisabledAddressesAccess],
     )
     def disable(
         self,

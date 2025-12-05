@@ -2,7 +2,7 @@
 Local onde registra os controllers da aplicação interna
 para a implementação das rotas dos end-points.
 """
-from internal_api.modules.address.controllers import AddressController, CityController, FederativeUnitController, NeighborhoodController
+from internal_api.modules.address.controllers import AddressController, CityController, CountryController, FederativeUnitController, NeighborhoodController
 from internal_api.modules.employee.controllers import EmployeeController, RoleController
 from ninja import Swagger
 from internal_api.modules.core.token.controllers import TokenJWTControllers
@@ -35,9 +35,10 @@ internal_api.register_controllers(
 
 # Módulo ADDRESS
 internal_api.register_controllers(
-    NeighborhoodController,
-    CityController,
+    CountryController,
     FederativeUnitController,
+    CityController,
+    NeighborhoodController,
     AddressController,
 )
 

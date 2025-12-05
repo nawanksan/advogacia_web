@@ -66,11 +66,7 @@ class CountryOut(ModelSchema):
 
     class Meta:  # pylint: disable=missing-class-docstring
         model = Country
-        exclude = [
-            "last_user",
-            "registration",
-            "last_modification",
-        ]
+        fields = '__all__'
 
 class FederativeUnitList(Schema):
     """Schema responsável por listar unidades federativas."""
