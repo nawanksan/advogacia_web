@@ -172,7 +172,7 @@ class FederativeUnitController(Controller):
     
     @route.get(
         '/',
-        response=List[FederativeUnitList]
+        response=PaginatedResponseSchema[FederativeUnitList]
     )
     def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
     
@@ -257,7 +257,7 @@ class CityController(Controller):
     
     @route.get(
         '/',
-        response=List[CityList]
+        response=PaginatedResponseSchema[CityList]
     )
     def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
     
@@ -341,7 +341,7 @@ class NeighborhoodController(Controller):
     
     @route.get(
         '/',
-        response=List[NeighborhoodList]
+        response=PaginatedResponseSchema[NeighborhoodList]
     )
     def list(self, filters: NeighborhoodFilter = Query(...)) -> QuerySet[Any]:
     
@@ -425,7 +425,7 @@ class AddressController(Controller):
     
     @route.get(
         '/',
-        response=List[AddressList]
+        response=PaginatedResponseSchema[AddressList]
     )
     def list(self, filters: AddressFilter = Query(...)) -> QuerySet[Any]:
     

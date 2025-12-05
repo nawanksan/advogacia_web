@@ -1,4 +1,5 @@
 from typing import Any, List, Tuple
+from internal_api.modules.core.main.schemas import PaginatedResponseSchema
 from internal_api.modules.core.utils.classes import Controller
 from ninja import Query
 from django.db.models import QuerySet
@@ -17,7 +18,7 @@ class UserController(Controller):
     
     @route.get(
         'users/',
-        response=List[UsersList],
+        response=PaginatedResponseSchema[UsersList],
         # permissions=[
         #     PostRequestsAccess
         # ]

@@ -7,7 +7,7 @@ from internal_api.modules.core.utils.classes import Controller
 from ninja_extra import api_controller, route
 
 from internal_api.modules.core.utils.constants import ERROR_STATUSES, SUCCESS_STATUSES
-from internal_api.modules.core.main.schemas import MessageSchema
+from internal_api.modules.core.main.schemas import MessageSchema, PaginatedResponseSchema
 
 @api_controller(
     'employee/',
@@ -19,7 +19,7 @@ class EmployeeController(Controller):
 
     @route.get(
         '/',
-        response=List[EmployeeList]
+        response=PaginatedResponseSchema[EmployeeList]
     )
     def list(self, filters: EmployeeFilter = Query(...)) -> QuerySet[Any]:
 
@@ -111,7 +111,7 @@ class RoleController(Controller):
 
     @route.get(
         '/',
-        response=List[RoleList],
+        response=PaginatedResponseSchema[RoleList],
         # permissions=[
         #     GetRolesAccess
         #     | PostEmployeesAccess
