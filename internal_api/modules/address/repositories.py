@@ -3,7 +3,7 @@ from typing import Dict
 from django.db import models
 from django.http import Http404
 
-from internal_api.modules.core.utils import remove_excess_spaces
+from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 from internal_api.modules.core.utils.classes import Repository
 from .models import Address, Country,Neighbordhood, City, FederativeUnit ,AbstractBaseModel
 
@@ -18,13 +18,13 @@ class CountryRepository(Repository):
     # Country
     @classmethod
     def update_payload(
-        cls, *, payload: Dict, last_user_id: int, **kwargs
+        cls, *, payload: Dict, **kwargs
     ) -> Dict:
         """
         Método responsável por atualizar o payload do país.
         """
         updated_payload: Dict = super().update_payload(
-            payload=payload, last_user_id=last_user_id
+            payload=payload
         )
         updated_payload.update({
             'name': remove_excess_spaces(

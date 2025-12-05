@@ -3,6 +3,7 @@ from django.db import models, transaction, IntegrityError
 from django.db.models import ObjectDoesNotExist
 from ninja_extra import status
 
+from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 from internal_api.modules.core.utils.classes import Service
 from internal_api.modules.address.repositories import (
     CountryRepository,
@@ -11,7 +12,6 @@ from internal_api.modules.address.repositories import (
     NeighborhoodRepository,
     AddressRepository,
 )
-from internal_api.modules.core.utils import remove_excess_spaces
 
 class CountryServices(Service):
     
@@ -140,7 +140,7 @@ class FederativeUnitService(Service):
 
     @classmethod
     def post(
-        cls, *, payload: Dict[str, Any], last_user_id: int
+        cls, *, payload: Dict[str, Any]
     ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
 
         try:
@@ -163,7 +163,7 @@ class FederativeUnitService(Service):
     # -------------------------------
     @classmethod
     def put(
-        cls, *, id: int, payload: Dict[str, Any], last_user_id: int
+        cls, *, id: int, payload: Dict[str, Any]
     ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
 
         try:
@@ -180,7 +180,6 @@ class FederativeUnitService(Service):
                 updated = cls.repository.put(
                     instance=instance,
                     payload=payload,
-                    last_user_id=last_user_id
                 )
                 return status.HTTP_200_OK, updated
 
@@ -216,20 +215,20 @@ class CityService(Service):
 
 
     @classmethod
-    def post(cls, *, payload: Dict[str, Any], last_user_id: int):
+    def post(cls, *, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
                 st, msg = cls.validate_payload(payload=payload)
                 if st != status.HTTP_200_OK:
                     return st, msg
 
-                instance = cls.repository.post(payload=payload, last_user_id=last_user_id)
+                instance = cls.repository.post(payload=payload)
                 return status.HTTP_201_CREATED, instance
         except IntegrityError as e:
             return status.HTTP_500_INTERNAL_SERVER_ERROR, {"message": str(e)}
 
     @classmethod
-    def put(cls, *, id: int, payload: Dict[str, Any], last_user_id: int):
+    def put(cls, *, id: int, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
                 st, instance = cls.get(id=id)
@@ -242,8 +241,7 @@ class CityService(Service):
 
                 updated = cls.repository.put(
                     instance=instance,
-                    payload=payload,
-                    last_user_id=last_user_id
+                    payload=payload
                 )
                 return status.HTTP_200_OK, updated
         except IntegrityError as e:
@@ -279,20 +277,20 @@ class NeighborhoodService(Service):
 
 
     @classmethod
-    def post(cls, *, payload: Dict[str, Any], last_user_id: int):
+    def post(cls, *, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
                 st, msg = cls.validate_payload(payload=payload)
                 if st != status.HTTP_200_OK:
                     return st, msg
 
-                instance = cls.repository.post(payload=payload, last_user_id=last_user_id)
+                instance = cls.repository.post(payload=payload)
                 return status.HTTP_201_CREATED, instance
         except IntegrityError as e:
             return status.HTTP_500_INTERNAL_SERVER_ERROR, {"message": str(e)}
 
     @classmethod
-    def put(cls, *, id: int, payload: Dict[str, Any], last_user_id: int):
+    def put(cls, *, id: int, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
                 st, instance = cls.get(id=id)
@@ -305,8 +303,7 @@ class NeighborhoodService(Service):
 
                 updated = cls.repository.put(
                     instance=instance,
-                    payload=payload,
-                    last_user_id=last_user_id
+                    payload=payload
                 )
                 return status.HTTP_200_OK, updated
 
@@ -351,7 +348,7 @@ class AddressService(Service):
 
 
     @classmethod
-    def post(cls, *, payload: Dict[str, Any], last_user_id: int):
+    def post(cls, *, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
 
@@ -360,8 +357,7 @@ class AddressService(Service):
                     return st, msg
 
                 instance = cls.repository.post(
-                    payload=payload,
-                    last_user_id=last_user_id
+                    payload=payload
                 )
                 return status.HTTP_201_CREATED, instance
 
@@ -371,7 +367,7 @@ class AddressService(Service):
             }
 
     @classmethod
-    def put(cls, *, id: int, payload: Dict[str, Any], last_user_id: int):
+    def put(cls, *, id: int, payload: Dict[str, Any]):
         try:
             with transaction.atomic():
 
@@ -385,8 +381,7 @@ class AddressService(Service):
 
                 updated = cls.repository.put(
                     instance=instance,
-                    payload=payload,
-                    last_user_id=last_user_id
+                    payload=payload
                 )
                 return status.HTTP_200_OK, updated
 

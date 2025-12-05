@@ -22,7 +22,7 @@ class CountryController(Controller):
     a qual as recebe e coordena as ações necessárias.
     """
 
-    service: CountryServices
+    service = CountryServices
 
     @route.get(
         'country/',
@@ -111,7 +111,7 @@ class CountryController(Controller):
         """
         return self.service.post(
             payload=payload.dict(),
-            last_user_id=request.user.id,
+            # last_user_id=request.user.id,
         )
 
     @route.put(
@@ -136,7 +136,7 @@ class CountryController(Controller):
         return self.service.put(
             id=id,
             payload=payload.dict(),
-            last_user_id=request.user.id,
+            # last_user_id=request.user.id,
         )
 
     @route.patch(
@@ -158,7 +158,7 @@ class CountryController(Controller):
         """
         return self.service.disable(
             id=id,
-            last_user_id=request.user.id,
+            # last_user_id=request.user.id,
         )
 
 

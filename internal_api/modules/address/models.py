@@ -9,7 +9,7 @@ class Country(AbstractBaseModel):
     )
     abbreviation: models.CharField = models.CharField(
         verbose_name=_('Abbreviation'),
-        max_length=2
+        max_length=3
     )
 
     class Meta:  # pylint: disable=missing-class-docstring

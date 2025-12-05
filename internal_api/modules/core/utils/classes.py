@@ -44,8 +44,9 @@ class Repository:
         queryset: models.QuerySet = cls.model.objects.only(*only) if only else cls.model.objects.all()
         return get_object_or_404(queryset, id=id)
     
+    @classmethod
     def post(
-        cls, *, payload: Dict, last_user_id: int, **kwargs
+        cls, *, payload: Dict, **kwargs
     ) -> models.Model:
         """
         Cria um registro.

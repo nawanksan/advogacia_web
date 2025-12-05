@@ -22,9 +22,9 @@ class  CustomJWTAuth(JWTAuth):
             if not user:
                 raise HttpError(401, _("Invalid token or user does not exist"))
             # opcional: validar audience dentro do token
-            if self.expected_audience:
-                if token.payload.get("aud") != self.expected_audience:
-                    raise HttpError(403, _("Invalid audience"))
+            # if self.expected_audience:
+            #     if token.payload.get("aud") != self.expected_audience:
+            #         raise HttpError(403, _("Invalid audience"))
 
             return user
         except Exception:
