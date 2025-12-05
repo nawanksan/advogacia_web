@@ -30,7 +30,7 @@
             const password = form.querySelector("input[name='password']").value;
             const csrftoken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
 
-            fetch("/api/v1/core/token/", {
+            fetch("/api/core/token/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

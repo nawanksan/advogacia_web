@@ -4,13 +4,18 @@ para a implementação das rotas dos end-points.
 """
 from internal_api.modules.address.controllers import AddressController, CityController, CountryController, FederativeUnitController, NeighborhoodController
 from internal_api.modules.employee.controllers import EmployeeController, RoleController
+# SWAGGER DOCS TEMPLATE IMPORTS:
 from ninja import Swagger
 from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
-from internal_api.modules.core.main.auth import CustomJWTAuth, JWTAuth
+
+# CUSTOM AUTH IMPORTS:
+from internal_api.modules.core.main.auth import CustomJWTAuth
+
 from internal_api.modules.core.users.controllers import UserController
 from django.contrib.admin.views.decorators import  staff_member_required
 
+# expected_audience='api-lawmanager', type_user="INT"
 
 internal_api = NinjaExtraAPI(
     auth=CustomJWTAuth(),
@@ -21,8 +26,13 @@ internal_api = NinjaExtraAPI(
     docs=Swagger(
         settings={
             "persistAuthorization": True,
-            "Filter": True,
+            "filter": True,
+            "syntaxHighlight": {
+                "activate": True,
+                "theme": "nord",
+            },
             "docExpansion": "none",
+            "tagsSorter": "alpha",
         }
     )
 )
