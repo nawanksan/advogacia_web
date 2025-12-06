@@ -62,7 +62,7 @@ ROOT_URLCONF = 'web_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -108,12 +108,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 NINJA_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),   # Token dura 3 horas
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=18),   # Token dura 3 horas
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh dura 1 dia
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    'TOKEN_OBTAIN_PAIR_INPUT_SCHEMA': (
+        'ninja_jwt.schema.TokenObtainPairInputSchema'
+    ),
 }
 
+# Session expiration definition:
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

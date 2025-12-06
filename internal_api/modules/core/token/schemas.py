@@ -20,9 +20,11 @@ class CustomTokenObtainOutSchema(Schema):
     com o token de acesso.
     """
 
-    token: str = Field(..., description='Token de acesso')
+    access: str
+    refresh: str
     user: UserLoginBase = Field(..., description='Usuário')
 
 class CustomTokenObtainSchema(Schema):
     username: str = Field(..., description="Username")
     password: str = Field(..., description="Senha")
+    # user: UserLoginBase

@@ -40,8 +40,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.token) {
-                        localStorage.setItem("authorized", JSON.stringify({ JWTAuth: { value: data.token } }));
+                    if (data.access) {
+                        localStorage.setItem("authorized", JSON.stringify({ JWTAuth: { value: data.access } }));
                         form.submit();
                     } else {
                         showErrorMessage(data.detail || data.message);

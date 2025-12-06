@@ -10,7 +10,7 @@ from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
 
 # CUSTOM AUTH IMPORTS:
-from internal_api.modules.core.main.auth import CustomJWTAuth
+from internal_api.modules.core.main.auth import JWTAuth
 
 from internal_api.modules.core.users.controllers import UserController
 from django.contrib.admin.views.decorators import  staff_member_required
@@ -18,7 +18,7 @@ from django.contrib.admin.views.decorators import  staff_member_required
 # expected_audience='api-lawmanager', type_user="INT"
 
 internal_api = NinjaExtraAPI(
-    auth=CustomJWTAuth(),
+    auth=JWTAuth(),
     title="Meu sistema Jurídico API",
     version="0.0.1",
     docs_decorator=staff_member_required,

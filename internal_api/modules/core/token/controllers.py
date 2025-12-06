@@ -8,7 +8,7 @@ from ninja_jwt.tokens import RefreshToken
 
 @api_controller(
     'core/',
-    tags=['CORE - USERS'],
+    tags=['CORE - TOKEN'],
     auth=None
 )
 class TokenJWTControllers(ControllerBase):
@@ -17,6 +17,14 @@ class TokenJWTControllers(ControllerBase):
         response=CustomTokenObtainOutSchema,
         url_name='token_obtain'
     )
+    # def obtain_token(self, request, user_token: CustomTokenObtainSchema):
+    #     """
+    #     Rota responsável por autenticar o token da requisição, retornando informações
+    #     para o front-end sobre as permissões do usuário.
+    #     ------------------------------------------------------------------------------
+    #     """
+    #     user_token.check_user_authentication_rule()
+    #     return user_token.output_schema()
     def obtain_token(self, request, user_token: CustomTokenObtainSchema):
         """
         Rota responsável por autenticar o token da requisição e retornar
@@ -35,10 +43,8 @@ class TokenJWTControllers(ControllerBase):
         # aqui você pode criar o token JWT usando seu CustomJWTAuth
         refresh = RefreshToken.for_user(user)
 
-        return CustomTokenObtainOutSchema(
-            token=str(refresh.access_token),
-            user=UserLoginBase(
-                id=user.id,
-                username=user.username
-            )
-        )
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "user": ...
+        }

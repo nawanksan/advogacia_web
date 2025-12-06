@@ -6,6 +6,7 @@ from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import FieldError
 from django.utils.translation import gettext_lazy as _
+from internal_api.modules.core.utils.model_utils import get_active_references
 # from .omitted_fields import omitted_fields
 
 class Repository:
@@ -82,6 +83,24 @@ class Repository:
             setattr(instance, key, value)
         instance.save()
 
+        return instance
+    
+    @classmethod
+    def disable(
+        cls, *, instance: models.Model, last_user_id: int
+    ) -> models.Model:
+        """
+        Desabilita um registro.
+        """
+        if not isinstance(instance, cls.model):
+            raise Http404(
+                "The instance does not belong to the model."
+                f"{cls.model._meta.verbose_name}."
+            )
+
+        instance.is_active = False
+        instance.last_user_id = last_user_id
+        instance.save()
         return instance
 
 
@@ -164,6 +183,56 @@ class Service:
                 'message': str(error)
             }
 
+    @classmethod
+    def disable(
+        cls, *, id: int, last_user_id: int
+    ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
+        try:
+            with transaction.atomic():
+                status_code: int
+                message_or_object: models.Model | Dict[str, str]
+
+                status_code, message_or_object = cls.get(id=id)
+                if status_code != status.HTTP_200_OK:
+                    return status_code, message_or_object
+
+                instance: models.Model = message_or_object
+
+                if not instance.is_active:
+                    verbose_name: str = (
+                        cls.repository.model._meta.verbose_name.capitalize()
+                    )
+                    return status.HTTP_400_BAD_REQUEST, {
+                        'message': (
+                            f'{verbose_name} '
+                            'está indisponível.'
+                        )
+                    }
+                active_references: Union[list, str] = get_active_references(
+                    model=instance,
+                    whitelist=cls.whitelist_disable_models,
+                )
+                if active_references:
+                    active_references = ', '.join(active_references)
+                    verbose_name: str = (
+                        cls.repository.model._meta.verbose_name.capitalize()
+                    )
+                    return status.HTTP_400_BAD_REQUEST, {
+                        'message': (
+                            f'Não é possível inativar {verbose_name}, '
+                            'pois há as seguintes referências ativas: '
+                            f'{active_references}.'
+                        )
+                    }
+
+                instance = cls.repository.disable(
+                    instance=instance, last_user_id=last_user_id
+                )
+                return status.HTTP_200_OK, instance
+        except IntegrityError as error:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR, {
+                'message': str(error)
+            }
 
 class Controller:
     """
