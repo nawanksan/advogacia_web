@@ -92,17 +92,30 @@ class FederativeUnitFilter(FilterSchema):
 class FederativeUnitInPost(ModelSchema):
     """Schema de entrada para criação de UF."""
 
+    country_id: int = Field(
+        ...,
+        description='ID do pais'
+    )
     class Meta:
         model = FederativeUnit
-        exclude = ['id']
+        exclude = [
+            'id',
+            'country'
+        ]
 
 
 class FederativeUnitInPut(ModelSchema):
     """Schema de entrada para edição de UF."""
-
+    country_id: int = Field(
+        ...,
+        description='ID do pais'
+    )
     class Meta:
         model = FederativeUnit
-        exclude = ['id']
+        exclude = [
+            'id',
+            'country'
+        ]
 
 
 class FederativeUnitOut(ModelSchema):

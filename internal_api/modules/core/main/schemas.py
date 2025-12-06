@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 
 class MessageSchema(Schema):
-    detail: str
+    message: str
 
 
 T = TypeVar("T")

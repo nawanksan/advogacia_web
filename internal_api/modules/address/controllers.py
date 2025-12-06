@@ -176,7 +176,7 @@ class FederativeUnitController(Controller):
     )
     def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
     
-        return self.service.list(filters=filters).distinct()
+        return self.service.list(filters=filters)
     
     @route.get(
         '/{int:id}',

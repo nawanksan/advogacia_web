@@ -47,13 +47,13 @@ class FederativeUnitRepository(Repository):
                 'name': remove_excess_spaces(
                     payload.get('name', '')
                 ).upper(),
-                'abbreviaton': remove_excess_spaces(
-                    payload.get('abbreviaton', '')
+                'abbreviation': remove_excess_spaces(
+                    payload.get('abbreviation', '')
                 ).upper()
             }
         )
 
-        update_payload: Dict = super.update_payload(
+        update_payload: Dict = super().update_payload(
             payload=payload
         )
 

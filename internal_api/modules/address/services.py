@@ -16,6 +16,10 @@ from internal_api.modules.address.repositories import (
 class CountryServices(Service):
     
     repository = CountryRepository
+    
+    @classmethod
+    def list_queryset(cls, *, filters: Optional[Any] = None):
+        return super().list(filters=filters)
 
     @classmethod
     def validate_payload(  # noqa: PLR0911, PLR0912
@@ -56,7 +60,8 @@ class CountryServices(Service):
                 'message': 'Sigla deve possuir exatamente três letras.'
             }
 
-        country_list = cls.list()
+        country_list = cls.list_queryset()
+
         country_filter_name = country_list.filter(
             name=get_name, is_active=True
         )
@@ -101,10 +106,23 @@ class CountryServices(Service):
                 }
 
         return status.HTTP_200_OK, country
+    
+    @classmethod
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
 
 class FederativeUnitService(Service):
 
     repository = FederativeUnitRepository
+    
+    @classmethod
+    def list_queryset(cls, *, filters: Optional[Any] = None):
+        return super().list(filters=filters)
 
     @classmethod
     def validate_payload(
@@ -114,7 +132,7 @@ class FederativeUnitService(Service):
         name = remove_excess_spaces(payload.get("name", "")).upper()
         abbreviation = remove_excess_spaces(payload.get("abbreviation", "")).upper()
         country_id = payload.get("country_id")
-
+        print('pais', country_id)
         if name == "":
             return status.HTTP_400_BAD_REQUEST, {"message": "Nome não pode ser vazio."}
 
@@ -125,10 +143,12 @@ class FederativeUnitService(Service):
         from internal_api.modules.address.models import Country
 
         if not Country.objects.filter(id=country_id, is_active=True).exists():
-            return status.HTTP_400_BAD_REQUEST, {"message": "País informado é inválido."}
+            return status.HTTP_400_BAD_REQUEST, {
+                "message": "País informado é inválido."
+            }
 
         # Verificar duplicidade
-        qs = cls.list().filter(name=name, abbreviation=abbreviation, country_id=country_id)
+        qs = cls.list_queryset().filter(name=name, abbreviation=abbreviation, country_id=country_id)
         if id is not None:
             qs = qs.exclude(id=id)
         if qs.exists():
@@ -137,6 +157,15 @@ class FederativeUnitService(Service):
             }
 
         return status.HTTP_200_OK, None
+    
+    @classmethod
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
 
     @classmethod
     def post(
