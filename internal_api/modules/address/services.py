@@ -406,9 +406,12 @@ class AddressService(Service):
         try:
             with transaction.atomic():
 
-                st, msg = cls.validate_payload(payload=payload)
-                if st != status.HTTP_200_OK:
-                    return st, msg
+                status_code, message_or_object = cls.validate_payload(
+                    payload=payload
+                )
+                if status_code != status.HTTP_200_OK:
+                    message = message_or_object
+                    return status_code, message
 
                 instance = cls.repository.post(
                     payload=payload
