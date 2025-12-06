@@ -72,11 +72,7 @@ class FederativeUnitList(Schema):
     """Schema responsável por listar unidades federativas."""
     id: int = Field(..., description='ID da UF')
     name: str = Field(..., description='Nome')
-    abbreviation: str = Field(
-        ..., description="Abreviação da unidade federativa")
-    country_name: str = Field(
-        ..., alias="country.name", description="Nome do país")
-    is_active: bool = Field(..., description="Está ativo?")
+    # acronym: str = Field(..., description='Sigla')
 
 
 class FederativeUnitFilter(FilterSchema):
@@ -86,13 +82,11 @@ class FederativeUnitFilter(FilterSchema):
         q='name__istartswith',
         description='Nome da UF'
     )
-    federative_id: int = Field(
-        None, q="id__exact", description="ID da unidade federativa")
-    country_id: int = Field(
-        None, q="country_id__exact", description="ID do país")
-    country_name: str = Field(
-        None, q="country__name__istartswith", description="Nome do país")
-    is_active: bool = Field(None, q="is_active", description="Está ativo?")
+    acronym: str = Field(
+        None,
+        q='acronym__iexact',
+        description='Sigla da UF'
+    )
 
 
 class FederativeUnitInPost(ModelSchema):
@@ -106,7 +100,7 @@ class FederativeUnitInPost(ModelSchema):
         model = FederativeUnit
         exclude = [
             'id',
-            'country',
+            'country'
         ]
 
 
@@ -155,11 +149,11 @@ class CityList(Schema):
         alias='federative_unit.name',
         description='Nome da unidade federativa'
     )
-    federative_unit_acronym: str = Field(
-        ...,
-        alias='federative_unit.acronym',
-        description='Sigla da UF'
-    )
+    # federative_unit_acronym: str = Field(
+    #     ...,
+    #     alias='federative_unit.acronym',
+    #     description='Sigla da UF'
+    # )
 
 
 class CityInPost(ModelSchema):
@@ -248,7 +242,7 @@ class NeighborhoodOut(ModelSchema):
 class AddressInPost(ModelSchema):
     """Schema de entrada para criação de endereço."""
     
-    neighborhood_id: int = Field(
+    neighbordhood_id: int = Field(
         ...,
         description='ID do bairro'
     )
@@ -262,6 +256,7 @@ class AddressInPost(ModelSchema):
         exclude = [
             'id',
             'neighbordhood',
+            'complements',
             'is_active'
         ]
 

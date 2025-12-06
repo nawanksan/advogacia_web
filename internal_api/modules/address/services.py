@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 from django.db import models, transaction, IntegrityError
 from django.db.models import ObjectDoesNotExist
 from ninja_extra import status
+from internal_api.modules.address.models import Neighbordhood
 
 from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 from internal_api.modules.core.utils.classes import Service
@@ -293,6 +294,10 @@ class CityService(Service):
 class NeighborhoodService(Service):
 
     repository = NeighborhoodRepository
+    
+    @classmethod
+    def list_queryset(cls, *, filters: Optional[Any] = None):
+        return super().list(filters=filters)
 
     @classmethod
     def validate_payload(cls, *, payload: Dict[str, Any], id: Optional[int] = None):
@@ -307,7 +312,7 @@ class NeighborhoodService(Service):
         if not City.objects.filter(id=city_id, is_active=True).exists():
             return status.HTTP_400_BAD_REQUEST, {"message": "Cidade informada é inválida."}
 
-        qs = cls.list().filter(name=name, city_id=city_id)
+        qs = cls.list_queryset().filter(name=name, city_id=city_id)
         if id:
             qs = qs.exclude(id=id)
         if qs.exists():
@@ -317,6 +322,14 @@ class NeighborhoodService(Service):
 
         return status.HTTP_200_OK, None
 
+    @classmethod
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
 
     @classmethod
     def post(cls, *, payload: Dict[str, Any]):
@@ -364,7 +377,7 @@ class AddressService(Service):
         number = payload.get("number")
         postal_code = remove_excess_spaces(payload.get("postal_code", ""))
         neighbordhood_id = payload.get("neighbordhood_id")
-
+        print(neighbordhood_id)
         if street_name == "":
             return status.HTTP_400_BAD_REQUEST, {
                 "message": "Nome da rua não pode ser vazio."
@@ -380,7 +393,6 @@ class AddressService(Service):
                 "message": "CEP é obrigatório."
             }
 
-        from internal_api.modules.address.models import Neighbordhood
         if not Neighbordhood.objects.filter(id=neighbordhood_id, is_active=True).exists():
             return status.HTTP_400_BAD_REQUEST, {
                 "message": "Bairro informado é inválido."
