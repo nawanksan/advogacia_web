@@ -75,7 +75,7 @@ class CityRepository(Repository):
             }
         )
 
-        update_payload: Dict = super.update_payload(
+        update_payload: Dict = super().update_payload(
             payload=payload
         )
 
@@ -97,7 +97,7 @@ class NeighborhoodRepository(Repository):
             }
         )
 
-        update_payload: Dict = super.update_payload(
+        update_payload: Dict = super().update_payload(
             payload=payload
         )
 
@@ -127,7 +127,7 @@ class AddressRepository(Repository):
             }
         )
 
-        update_payload: Dict = super.update_payload(
+        update_payload: Dict = super().update_payload(
             payload=payload
         )
 

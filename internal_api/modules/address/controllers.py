@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from ninja import Query
 
 
-from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, CountryFilter, CountryInPost, CountryInPut, CountryList, CountryOut, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
+from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, CountryFilter, CountryInPost, CountryInPut, CountryList, CountryOut, FederativeUnitFilter, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
 from internal_api.modules.address.services import AddressService, CityService, CountryServices, FederativeUnitService, NeighborhoodService
 from internal_api.modules.core.main.schemas import MessageSchema, PaginatedResponseSchema
 from internal_api.modules.core.utils.classes import Controller
@@ -174,7 +174,7 @@ class FederativeUnitController(Controller):
         '/',
         response=PaginatedResponseSchema[FederativeUnitList]
     )
-    def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
+    def list(self, filters: FederativeUnitFilter = Query(...)) -> QuerySet[Any]:
     
         return self.service.list(filters=filters)
     
@@ -261,7 +261,7 @@ class CityController(Controller):
     )
     def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
     
-        return self.service.list(filters=filters).distinct()
+        return self.service.list(filters=filters)
     
     @route.get(
         '/{int:id}',

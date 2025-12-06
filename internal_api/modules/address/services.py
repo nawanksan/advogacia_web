@@ -221,6 +221,10 @@ class CityService(Service):
     repository = CityRepository
 
     @classmethod
+    def list_queryset(cls, *, filters: Optional[Any] = None):
+        return super().list(filters=filters)
+
+    @classmethod
     def validate_payload(cls, *, payload: Dict[str, Any], id: Optional[int] = None):
 
         name = remove_excess_spaces(payload.get("name", "")).upper()
@@ -234,13 +238,22 @@ class CityService(Service):
         if not FederativeUnit.objects.filter(id=federative_unit_id, is_active=True).exists():
             return status.HTTP_400_BAD_REQUEST, {"message": "UF informada é inválida."}
 
-        qs = cls.list().filter(name=name, federative_unit_id=federative_unit_id)
+        qs = cls.list_queryset().filter(name=name, federative_unit_id=federative_unit_id)
         if id:
             qs = qs.exclude(id=id)
         if qs.exists():
             return status.HTTP_400_BAD_REQUEST, {"message": "Cidade já cadastrada nessa UF."}
 
         return status.HTTP_200_OK, None
+    
+    @classmethod
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
 
 
     @classmethod

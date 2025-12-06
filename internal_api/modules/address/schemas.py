@@ -72,7 +72,11 @@ class FederativeUnitList(Schema):
     """Schema responsável por listar unidades federativas."""
     id: int = Field(..., description='ID da UF')
     name: str = Field(..., description='Nome')
-    acronym: str = Field(..., description='Sigla')
+    abbreviation: str = Field(
+        ..., description="Abreviação da unidade federativa")
+    country_name: str = Field(
+        ..., alias="country.name", description="Nome do país")
+    is_active: bool = Field(..., description="Está ativo?")
 
 
 class FederativeUnitFilter(FilterSchema):
@@ -82,11 +86,13 @@ class FederativeUnitFilter(FilterSchema):
         q='name__istartswith',
         description='Nome da UF'
     )
-    acronym: str = Field(
-        None,
-        q='acronym__iexact',
-        description='Sigla da UF'
-    )
+    federative_id: int = Field(
+        None, q="id__exact", description="ID da unidade federativa")
+    country_id: int = Field(
+        None, q="country_id__exact", description="ID do país")
+    country_name: str = Field(
+        None, q="country__name__istartswith", description="Nome do país")
+    is_active: bool = Field(None, q="is_active", description="Está ativo?")
 
 
 class FederativeUnitInPost(ModelSchema):
@@ -100,7 +106,7 @@ class FederativeUnitInPost(ModelSchema):
         model = FederativeUnit
         exclude = [
             'id',
-            'country'
+            'country',
         ]
 
 
