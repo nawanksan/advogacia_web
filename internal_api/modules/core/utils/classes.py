@@ -87,7 +87,7 @@ class Repository:
     
     @classmethod
     def disable(
-        cls, *, instance: models.Model, last_user_id: int
+        cls, *, instance: models.Model
     ) -> models.Model:
         """
         Desabilita um registro.
@@ -99,7 +99,6 @@ class Repository:
             )
 
         instance.is_active = False
-        instance.last_user_id = last_user_id
         instance.save()
         return instance
 
@@ -185,7 +184,7 @@ class Service:
 
     @classmethod
     def disable(
-        cls, *, id: int, last_user_id: int
+        cls, *, id: int
     ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
         try:
             with transaction.atomic():
@@ -226,7 +225,7 @@ class Service:
                     }
 
                 instance = cls.repository.disable(
-                    instance=instance, last_user_id=last_user_id
+                    instance=instance
                 )
                 return status.HTTP_200_OK, instance
         except IntegrityError as error:

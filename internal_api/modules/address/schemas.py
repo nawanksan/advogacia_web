@@ -25,7 +25,7 @@ class CountryInPost(ModelSchema):
         model = Country
         fields = [
             "name",
-            "abbreviation",
+            "abbreviation"
         ]
 
 
@@ -38,9 +38,10 @@ class CountryInPut(ModelSchema):
 
     class Meta:  # pylint: disable=missing-class-docstring
         model = Country
-        fields = [
-            "name",
-            "abbreviation",
+        exclude = [
+            'id',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -66,7 +67,10 @@ class CountryOut(ModelSchema):
 
     class Meta:  # pylint: disable=missing-class-docstring
         model = Country
-        fields = '__all__'
+        exclude= [
+            'last_modification',
+            'registration'
+        ]
 
 class FederativeUnitList(Schema):
     """Schema responsável por listar unidades federativas."""
@@ -100,7 +104,9 @@ class FederativeUnitInPost(ModelSchema):
         model = FederativeUnit
         exclude = [
             'id',
-            'country'
+            'country',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -114,7 +120,9 @@ class FederativeUnitInPut(ModelSchema):
         model = FederativeUnit
         exclude = [
             'id',
-            'country'
+            'country',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -123,7 +131,10 @@ class FederativeUnitOut(ModelSchema):
 
     class Meta:
         model = FederativeUnit
-        fields = "__all__"
+        exclude= [
+            'last_modification',
+            'registration'
+        ]
 
 
 class CityFilter(FilterSchema):
@@ -163,7 +174,12 @@ class CityInPost(ModelSchema):
 
     class Meta:
         model = City
-        exclude = ['id', 'federative_unit']
+        exclude = [
+            'id',
+            'federative_unit',
+            'last_modification',
+            'registration'
+        ]
 
 
 class CityInPut(ModelSchema):
@@ -173,7 +189,12 @@ class CityInPut(ModelSchema):
 
     class Meta:
         model = City
-        exclude = ['id', 'federative_unit']
+        exclude = [
+            'id',
+            'federative_unit',
+            'last_modification',
+            'registration'
+        ]
 
 
 class CityOut(ModelSchema):
@@ -182,7 +203,10 @@ class CityOut(ModelSchema):
 
     class Meta:
         model = City
-        fields = "__all__"
+        exclude= [
+            'last_modification',
+            'registration'
+        ]
 
 
 class NeighborhoodFilter(FilterSchema):
@@ -217,7 +241,12 @@ class NeighborhoodInPost(ModelSchema):
 
     class Meta:
         model = Neighbordhood
-        exclude = ['id', 'city']
+        exclude = [
+            'id',
+            'city',
+            'last_modification',
+            'registration'
+        ]
 
 
 class NeighborhoodInPut(ModelSchema):
@@ -227,7 +256,12 @@ class NeighborhoodInPut(ModelSchema):
 
     class Meta:
         model = Neighbordhood
-        exclude = ['id', 'city']
+        exclude = [
+            'id',
+            'city',
+            'last_modification',
+            'registration'
+        ]
 
 
 class NeighborhoodOut(ModelSchema):
@@ -236,7 +270,10 @@ class NeighborhoodOut(ModelSchema):
 
     class Meta:
         model = Neighbordhood
-        fields = "__all__"
+        exclude= [
+            'last_modification',
+            'registration'
+        ]
 
 
 class AddressInPost(ModelSchema):
@@ -257,7 +294,9 @@ class AddressInPost(ModelSchema):
             'id',
             'neighbordhood',
             'complements',
-            'is_active'
+            'is_active',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -273,7 +312,9 @@ class AddressInPut(ModelSchema):
         model = Address
         exclude = [
             'id',
-            'neighbordhood'
+            'neighbordhood',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -327,4 +368,7 @@ class AddressOut(ModelSchema):
 
     class Meta:
         model = Address
-        fields = "__all__"
+        exclude = [
+            'last_modification',
+            'registration'
+        ]

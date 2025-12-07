@@ -331,18 +331,18 @@ class NeighborhoodService(Service):
             "results": list(queryset)
         }
 
-    @classmethod
-    def post(cls, *, payload: Dict[str, Any]):
-        try:
-            with transaction.atomic():
-                st, msg = cls.validate_payload(payload=payload)
-                if st != status.HTTP_200_OK:
-                    return st, msg
+    # @classmethod
+    # def post(cls, *, payload: Dict[str, Any]):
+    #     try:
+    #         with transaction.atomic():
+    #             st, msg = cls.validate_payload(payload=payload)
+    #             if st != status.HTTP_200_OK:
+    #                 return st, msg
 
-                instance = cls.repository.post(payload=payload)
-                return status.HTTP_201_CREATED, instance
-        except IntegrityError as e:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR, {"message": str(e)}
+    #             instance = cls.repository.post(payload=payload)
+    #             return status.HTTP_201_CREATED, instance
+    #     except IntegrityError as e:
+    #         return status.HTTP_500_INTERNAL_SERVER_ERROR, {"message": str(e)}
 
     @classmethod
     def put(cls, *, id: int, payload: Dict[str, Any]):
@@ -377,25 +377,44 @@ class AddressService(Service):
         number = payload.get("number")
         postal_code = remove_excess_spaces(payload.get("postal_code", ""))
         neighbordhood_id = payload.get("neighbordhood_id")
-        print(neighbordhood_id)
+        
+        
+        status_code, neighbordhood_or_message = NeighborhoodService.get(
+            id=neighbordhood_id
+        )
+        
+        if status_code != status.HTTP_200_OK:
+            message = neighbordhood_or_message
+            return status_code, message
+
         if street_name == "":
             return status.HTTP_400_BAD_REQUEST, {
                 "message": "Nome da rua não pode ser vazio."
             }
 
-        if not number:
+        if not number | number < 1:
             return status.HTTP_400_BAD_REQUEST, {
-                "message": "Número é obrigatório."
+                "message": (
+                    "Número é obrigatório e não"
+                    "pode ser menor que 1."
+                )
             }
 
         if postal_code == "":
             return status.HTTP_400_BAD_REQUEST, {
                 "message": "CEP é obrigatório."
             }
-
-        if not Neighbordhood.objects.filter(id=neighbordhood_id, is_active=True).exists():
+            
+        if len(postal_code) != 8:
             return status.HTTP_400_BAD_REQUEST, {
-                "message": "Bairro informado é inválido."
+                'message': 'Tamanho inválido para o CEP.'
+            }
+
+        neighbordhood: Any = neighbordhood_or_message
+        
+        if not neighbordhood.is_active:
+            return status.HTTP_400_BAD_REQUEST, {
+                "message": "Bairro não está disponível."
             }
 
         return status.HTTP_200_OK, None

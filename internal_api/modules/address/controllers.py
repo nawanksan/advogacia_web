@@ -242,7 +242,7 @@ class FederativeUnitController(Controller):
         id: int,
     ) -> Tuple[Any, ...]:
         
-        return self.service.put(
+        return self.service.disable(
             id=id
         )
 
@@ -327,7 +327,7 @@ class CityController(Controller):
         id: int,
     ) -> Tuple[Any, ...]:
         
-        return self.service.put(
+        return self.service.disable(
             id=id
         )
 
@@ -411,7 +411,7 @@ class NeighborhoodController(Controller):
         id: int,
     ) -> Tuple[Any, ...]:
         
-        return self.service.put(
+        return self.service.disable(
             id=id
         )
 
@@ -482,19 +482,19 @@ class AddressController(Controller):
             payload=payload.dict()
         )
         
-    @route.patch(
-        '/{int:id}/disable/',
-        response={
-            SUCCESS_STATUSES: AddressOut,
-            ERROR_STATUSES: MessageSchema,
-        }
-    )
-    def desable(
-        self,
-        request,
-        id: int,
-    ) -> Tuple[Any, ...]:
+    # @route.patch(
+    #     '/{int:id}/disable/',
+    #     response={
+    #         SUCCESS_STATUSES: AddressOut,
+    #         ERROR_STATUSES: MessageSchema,
+    #     }
+    # )
+    # def desable(
+    #     self,
+    #     request,
+    #     id: int,
+    # ) -> Tuple[Any, ...]:
         
-        return self.service.put(
-            id=id
-        )
+    #     return self.service.disable(
+    #         id=id
+    #     )
