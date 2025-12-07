@@ -125,7 +125,16 @@ class EmployeeService(Service):
         #     return status.HTTP_400_BAD_REQUEST, {
         #         'message': 'o OAB inválido'
         #     }
-            
+        return status.HTTP_200_OK, employee
+    
+    @classmethod
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
     
     @classmethod
     def post(
@@ -160,7 +169,7 @@ class EmployeeService(Service):
                 
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
-                    return message
+                    return status_code, message
 
                 status_code, message_or_object = AddressService.post(
                     payload=address_payload
@@ -168,12 +177,12 @@ class EmployeeService(Service):
 
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
-                    return message
+                    return status_code, message
                 
                 post_address: Any = message_or_object
 
                 username: str = payload.pop('username')
-                is_system_user: bool = payload.get('is_sistem_user', False)
+                is_system_user: bool = payload.get('is_system_user', False)
 
                 payload['address_id'] = post_address.id
                 instance = EmployeeRepository.post(
@@ -296,6 +305,10 @@ class RoleService(Service):
     """
 
     repository = RoleRepository
+    
+    @classmethod
+    def list_queryset(cls, *, filters: Optional[Any] = None):
+        return super().list(filters=filters)
 
     @classmethod
     def validate_payload(
@@ -313,7 +326,7 @@ class RoleService(Service):
                 'message': 'Cargo não pode ser vazio.'
             }
 
-        filter_name: Any = cls.list().filter(name=name, is_active=True)
+        filter_name: Any = cls.list_queryset().filter(name=name, is_active=True)
         if id is not None:
             status_code, role_or_message = cls.get(id=id)
             if status_code != status.HTTP_200_OK:
@@ -338,17 +351,26 @@ class RoleService(Service):
             return status.HTTP_400_BAD_REQUEST, {'message': 'Cargo já existe.'}
         return status.HTTP_200_OK, role
 
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None) -> models.QuerySet:
+    #     "Método responsável por listar os cargos de funcionários."
+    #     queryset = cls.repository.list()
+    #     if filters:
+    #         queryset = filters.filter(queryset).distinct()
+    #     return queryset
+    
     @classmethod
-    def list(cls, *, filters: Optional[Any] = None) -> models.QuerySet:
-        "Método responsável por listar os cargos de funcionários."
-        queryset = cls.repository.list()
-        if filters:
-            queryset = filters.filter(queryset).distinct()
-        return queryset
+    def list(cls, *, filters: Optional[Any] = None):
+        queryset = super().list(filters=filters)
+
+        return {
+            "count": queryset.count(),
+            "results": list(queryset)
+        }
 
     @classmethod
     def post(
-        cls, *, payload: Dict[str, Any], last_user_id: int, **kwargs
+        cls, *, payload: Dict[str, Any], **kwargs
     ) -> Tuple[int, Union[models.Model, Dict[str, str]]]:
         """
         Método responsável por criar um cargo de funcionário.

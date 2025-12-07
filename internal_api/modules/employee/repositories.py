@@ -3,7 +3,7 @@ from typing import Dict
 from django.http import Http404
 from internal_api.modules.core.utils.classes import Repository
 from internal_api.modules.employee.models import Employee, Role
-from internal_api.modules.core.utils import remove_excess_spaces
+from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 
 
 class EmployeeRepository(Repository):

@@ -5,6 +5,8 @@ from internal_api.modules.core.utils.classes import Service
 from internal_api.modules.core.users.repositories import UserRepository
 from ninja_extra import status
 
+from internal_api.modules.core.utils.generators import generate_user_password
+
 class UserService(Service):
     
     repository = UserRepository
@@ -31,7 +33,17 @@ class UserService(Service):
                 message: Dict
                 employee = kwargs.get('employee')
                 
-                password = "1234"
+                password = generate_user_password()
+                
+                # status_code, message = send_email_username_password(
+                #     username=payload.get('username'),
+                #     password=password,
+                #     email=employee.email,
+                #     full_name=employee.full_name,
+                # )
+                
+                # if status_code != status.HTTP_200_OK:
+                #     return status_code, message
                 
                 instance = cls.repository.post(
                     payload={

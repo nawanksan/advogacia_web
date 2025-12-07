@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
-from internal_api.modules.address.schemas import AddressInPost
+from internal_api.modules.address.schemas import AddressInPost, AddressInPut
 from internal_api.modules.employee.models import Employee, Role
 
 class RoleFilter(FilterSchema):
@@ -44,6 +44,8 @@ class RoleInPost(ModelSchema):
         exclude = [
             'id',
             'is_active',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -58,6 +60,8 @@ class RoleInPut(ModelSchema):
         exclude = [
             'id',
             'is_active',
+            'last_modification',
+            'registration'
         ]
 
 
@@ -71,7 +75,10 @@ class RoleOut(ModelSchema):
 
     class Meta:  # pylint: disable=missing-class-docstring
         model = Role
-        fields = '__all__'
+        exclude = [
+            'last_modification',
+            'registration'
+        ]
 
 
 class EmployeeList(Schema):
@@ -175,6 +182,10 @@ class EmployeeInPost(ModelSchema):
         ...,
         description='Endereço'
     )
+    is_system_user: Optional[bool] = Field(
+        None,
+        description='funcionario vai usar o sistema?'
+    )
 
     class Meta:
         model = Employee
@@ -184,23 +195,30 @@ class EmployeeInPost(ModelSchema):
             'oab_status',
             'oab',
             'specialty',
-            'is_active'
+            'is_active',
+            'last_modification',
+            'registration'
         ]
 
 class EmployeeInPut(ModelSchema):
     username: Optional[str] = Field(None, description='Nome de usuário')
-    password: Optional[str] = Field(None, description='senha do sistema')
+    # password: Optional[str] = Field(None, description='senha do sistema')
     role_id: int = Field(..., description='ID do cargo')
-    # address_id: AddressInPost = Field(
-    #     ...,
-    #     description='Endereço'
-    # )
+    address: Optional[AddressInPut] = Field(
+        ...,
+        description='Endereço'
+    )
+    is_system_user: Optional[bool] = Field(
+        None,
+        description='funcionario vai usar o sistema?'
+    )
     
     class Meta:
         model = Employee
         exclude = [
             'id',
             'role',
-            # 'address'
-            'is_active'
+            'is_active',
+            'last_modification',
+            'registration'
         ]
