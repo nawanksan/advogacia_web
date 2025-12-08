@@ -18,9 +18,9 @@ class CountryServices(Service):
     
     repository = CountryRepository
     
-    @classmethod
-    def list_queryset(cls, *, filters: Optional[Any] = None):
-        return super().list(filters=filters)
+    # @classmethod
+    # def list_queryset(cls, *, filters: Optional[Any] = None):
+    #     return super().list(filters=filters)
 
     @classmethod
     def validate_payload(  # noqa: PLR0911, PLR0912
@@ -61,7 +61,7 @@ class CountryServices(Service):
                 'message': 'Sigla deve possuir exatamente três letras.'
             }
 
-        country_list = cls.list_queryset()
+        country_list = cls.list()
 
         country_filter_name = country_list.filter(
             name=get_name, is_active=True
@@ -121,9 +121,9 @@ class FederativeUnitService(Service):
 
     repository = FederativeUnitRepository
     
-    @classmethod
-    def list_queryset(cls, *, filters: Optional[Any] = None):
-        return super().list(filters=filters)
+    # @classmethod
+    # def list_queryset(cls, *, filters: Optional[Any] = None):
+    #     return super().list(filters=filters)
 
     @classmethod
     def validate_payload(
@@ -149,7 +149,7 @@ class FederativeUnitService(Service):
             }
 
         # Verificar duplicidade
-        qs = cls.list_queryset().filter(name=name, abbreviation=abbreviation, country_id=country_id)
+        qs = cls.list().filter(name=name, abbreviation=abbreviation, country_id=country_id)
         if id is not None:
             qs = qs.exclude(id=id)
         if qs.exists():
@@ -221,9 +221,9 @@ class CityService(Service):
 
     repository = CityRepository
 
-    @classmethod
-    def list_queryset(cls, *, filters: Optional[Any] = None):
-        return super().list(filters=filters)
+    # @classmethod
+    # def list_queryset(cls, *, filters: Optional[Any] = None):
+    #     return super().list(filters=filters)
 
     @classmethod
     def validate_payload(cls, *, payload: Dict[str, Any], id: Optional[int] = None):
@@ -239,7 +239,7 @@ class CityService(Service):
         if not FederativeUnit.objects.filter(id=federative_unit_id, is_active=True).exists():
             return status.HTTP_400_BAD_REQUEST, {"message": "UF informada é inválida."}
 
-        qs = cls.list_queryset().filter(name=name, federative_unit_id=federative_unit_id)
+        qs = cls.list().filter(name=name, federative_unit_id=federative_unit_id)
         if id:
             qs = qs.exclude(id=id)
         if qs.exists():
@@ -295,9 +295,9 @@ class NeighborhoodService(Service):
 
     repository = NeighborhoodRepository
     
-    @classmethod
-    def list_queryset(cls, *, filters: Optional[Any] = None):
-        return super().list(filters=filters)
+    # @classmethod
+    # def list_queryset(cls, *, filters: Optional[Any] = None):
+    #     return super().list(filters=filters)
 
     @classmethod
     def validate_payload(cls, *, payload: Dict[str, Any], id: Optional[int] = None):
@@ -312,7 +312,7 @@ class NeighborhoodService(Service):
         if not City.objects.filter(id=city_id, is_active=True).exists():
             return status.HTTP_400_BAD_REQUEST, {"message": "Cidade informada é inválida."}
 
-        qs = cls.list_queryset().filter(name=name, city_id=city_id)
+        qs = cls.list().filter(name=name, city_id=city_id)
         if id:
             qs = qs.exclude(id=id)
         if qs.exists():
