@@ -127,14 +127,14 @@ class EmployeeService(Service):
         #     }
         return status.HTTP_200_OK, employee
     
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
     
     @classmethod
     def post(
@@ -359,14 +359,14 @@ class RoleService(Service):
     #         queryset = filters.filter(queryset).distinct()
     #     return queryset
     
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
 
     @classmethod
     def post(

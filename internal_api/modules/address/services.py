@@ -108,14 +108,14 @@ class CountryServices(Service):
 
         return status.HTTP_200_OK, country
     
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
 
 class FederativeUnitService(Service):
 
@@ -159,14 +159,14 @@ class FederativeUnitService(Service):
 
         return status.HTTP_200_OK, None
     
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
 
     @classmethod
     def post(
@@ -247,14 +247,14 @@ class CityService(Service):
 
         return status.HTTP_200_OK, None
     
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
 
 
     @classmethod
@@ -322,14 +322,14 @@ class NeighborhoodService(Service):
 
         return status.HTTP_200_OK, None
 
-    @classmethod
-    def list(cls, *, filters: Optional[Any] = None):
-        queryset = super().list(filters=filters)
+    # @classmethod
+    # def list(cls, *, filters: Optional[Any] = None):
+    #     queryset = super().list(filters=filters)
 
-        return {
-            "count": queryset.count(),
-            "results": list(queryset)
-        }
+    #     return {
+    #         "count": queryset.count(),
+    #         "results": list(queryset)
+    #     }
 
     # @classmethod
     # def post(cls, *, payload: Dict[str, Any]):

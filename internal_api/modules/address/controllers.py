@@ -1,4 +1,4 @@
-from ninja_extra import api_controller, route
+from ninja_extra import api_controller, paginate, route
 from typing import Any, List, Tuple
 from django.db.models import QuerySet
 from ninja import Query
@@ -6,7 +6,7 @@ from ninja import Query
 
 from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, CountryFilter, CountryInPost, CountryInPut, CountryList, CountryOut, FederativeUnitFilter, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
 from internal_api.modules.address.services import AddressService, CityService, CountryServices, FederativeUnitService, NeighborhoodService
-from internal_api.modules.core.main.schemas import MessageSchema, PaginatedResponseSchema
+from internal_api.modules.core.main.schemas import CustomPagination, MessageSchema, PaginatedResponseSchema
 from internal_api.modules.core.utils.classes import Controller
 from internal_api.modules.core.utils.constants import ERROR_STATUSES, SUCCESS_STATUSES
 
@@ -39,7 +39,7 @@ class CountryController(Controller):
         #     | PutEmployeesAccess,
         # ],
     )
-    # @paginate(CustomPagination)
+    @paginate(CustomPagination)
     # @ordering(
     #     Ordering,
     #     ordering_fields=[
@@ -174,6 +174,7 @@ class FederativeUnitController(Controller):
         '/',
         response=PaginatedResponseSchema[FederativeUnitList]
     )
+    @paginate(CustomPagination)
     def list(self, filters: FederativeUnitFilter = Query(...)) -> QuerySet[Any]:
     
         return self.service.list(filters=filters)
@@ -259,6 +260,7 @@ class CityController(Controller):
         '/',
         response=PaginatedResponseSchema[CityList]
     )
+    @paginate(CustomPagination)
     def list(self, filters: CityFilter = Query(...)) -> QuerySet[Any]:
     
         return self.service.list(filters=filters)
@@ -343,6 +345,7 @@ class NeighborhoodController(Controller):
         '/',
         response=PaginatedResponseSchema[NeighborhoodList]
     )
+    @paginate(CustomPagination)
     def list(self, filters: NeighborhoodFilter = Query(...)) -> QuerySet[Any]:
     
         return self.service.list(filters=filters)
@@ -427,6 +430,7 @@ class AddressController(Controller):
         '/',
         response=PaginatedResponseSchema[AddressList]
     )
+    @paginate(CustomPagination)
     def list(self, filters: AddressFilter = Query(...)) -> QuerySet[Any]:
     
         return self.service.list(filters=filters).distinct()

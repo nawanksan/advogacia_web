@@ -321,8 +321,8 @@ class AddressInPut(ModelSchema):
 class AddressList(Schema):
     """Listagem de endereço."""
     id: int = Field(..., description='ID do endereço')
-    street: str = Field(..., description='Rua')
-    number: str = Field(..., description='Número')
+    street_name: str = Field(..., description='Rua')
+    number: int = Field(..., description='Número')
     neighborhood_name: str = Field(
         ...,
         alias='neighbordhood.name',
@@ -333,11 +333,11 @@ class AddressList(Schema):
         alias='neighbordhood.city.name',
         description='Cidade'
     )
-    federative_unit_acronym: str = Field(
-        ...,
-        alias='neighbordhood.city.federative_unit.acronym',
-        description='UF'
-    )
+    # federative_unit_acronym: str = Field(
+    #     ...,
+    #     alias='neighbordhood.city.federative_unit.acronym',
+    #     description='UF'
+    # )
 
 class AddressFilter(FilterSchema):
 

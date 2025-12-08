@@ -4,10 +4,10 @@ from django.db.models import QuerySet
 from internal_api.modules.employee.schemas import EmployeeFilter, EmployeeInPost, EmployeeInPut, EmployeeList, EmployeeOutSchema, RoleFilter, RoleInPost, RoleInPut, RoleList, RoleOut
 from internal_api.modules.employee.services import EmployeeService, RoleService
 from internal_api.modules.core.utils.classes import Controller
-from ninja_extra import api_controller, route
+from ninja_extra import api_controller, paginate, route
 
 from internal_api.modules.core.utils.constants import ERROR_STATUSES, SUCCESS_STATUSES
-from internal_api.modules.core.main.schemas import MessageSchema, PaginatedResponseSchema
+from internal_api.modules.core.main.schemas import CustomPagination, MessageSchema, PaginatedResponseSchema
 
 @api_controller(
     'employee/',
@@ -21,6 +21,7 @@ class EmployeeController(Controller):
         '/',
         response=PaginatedResponseSchema[EmployeeList]
     )
+    @paginate(CustomPagination)
     def list(self, filters: EmployeeFilter = Query(...)) -> QuerySet[Any]:
 
         return self.service.list(filters=filters)
@@ -121,7 +122,7 @@ class RoleController(Controller):
         #     | PutRolesPermissionsAccess,
         # ],
     )
-    # @paginate(CustomPagination)
+    @paginate(CustomPagination)
     # @ordering(
     #     Ordering,
     #     ordering_fields=[
