@@ -1,5 +1,5 @@
-from datetime import date
-from typing import List, Optional
+# from datetime import date
+from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
 
 from internal_api.modules.address.models import Address, City, Country, FederativeUnit, Neighbordhood

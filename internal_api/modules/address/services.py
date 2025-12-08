@@ -1,8 +1,6 @@
 from typing import Any, Dict, Optional, Tuple, Union
 from django.db import models, transaction, IntegrityError
-from django.db.models import ObjectDoesNotExist
 from ninja_extra import status
-from internal_api.modules.address.models import Neighbordhood
 
 from internal_api.modules.core.utils.remove_excess_spaces import remove_excess_spaces
 from internal_api.modules.core.utils.classes import Service

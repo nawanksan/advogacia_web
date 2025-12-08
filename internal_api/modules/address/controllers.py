@@ -1,5 +1,5 @@
 from ninja_extra import api_controller, paginate, route
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 from django.db.models import QuerySet
 from ninja import Query
 
