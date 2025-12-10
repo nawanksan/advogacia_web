@@ -23,9 +23,20 @@ class CustomUsers(AbstractBaseUser, PermissionsMixin):
         related_name='user_employee_employee',
         on_delete=models.RESTRICT,
     )
-    #is_admin_ti: models.BooleanField = models.BooleanField(default=False)
-    #is_admin: models.BooleanField = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    is_admin_ti: models.BooleanField = models.BooleanField(
+        verbose_name=_('TI Admin Status'),
+        default=False,
+        help_text=_(
+            'Designates that the user has access to IT permissions assignment management.'
+        ),
+    )
+    is_admin: models.BooleanField = models.BooleanField(
+        verbose_name=_('Admin Status'),
+        default=False,
+        help_text=_(
+            'Designates whether the user can log into the admin site.'
+        ),
+    )
     is_active: models.BooleanField = models.BooleanField(
         verbose_name=_('Active'),
         default=True,
@@ -36,5 +47,20 @@ class CustomUsers(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    def __str__(self):
-        return self.username
+    class Meta:  # pylint: disable=missing-class-docstring
+        ordering = ['-id']
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+
+    def __str__(self) -> str:
+        user: str = (
+            self.username if (self.is_admin or not self.employee) else
+            f'{self.username} - {self.employee.full_name}'
+        )
+        return user
+    
+    @property
+    def is_staff(self):
+        """Is the user a member of staff?"""
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
