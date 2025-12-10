@@ -1,7 +1,10 @@
 from ninja import Field, Schema
 from django.db.models import QuerySet
 from operator import attrgetter, itemgetter
-from ninja.pagination import PaginationBase
+from ninja_extra.pagination import PaginationBase
+from django.core.paginator import Paginator
+from ninja.pagination import PageNumberPagination
+
 from typing import (
     Any,
     Generic,
@@ -17,6 +20,32 @@ from ninja.types import DictStrAny
 from django.http import HttpRequest
 from pydantic import BaseModel
 
+class CustomPagination(PaginationBase):
+    page_size = 10
+    page_size_query_param = "per_page"
+    max_page_size = 100
+
+    def get_page_size(self, request):
+        try:
+            return int(request.GET.get(self.page_size_query_param, self.page_size))
+        except:
+            return self.page_size
+
+    # PARA NINJA-EXTRA → assinatura obrigatória
+    def paginate_queryset(self, queryset, request, **params):
+        page_size = self.get_page_size(request)
+        paginator = Paginator(queryset, page_size)
+
+        page_number = request.GET.get("page", 1)
+        page = paginator.get_page(page_number)
+
+        return page.object_list, paginator, page
+
+    def get_paginated_response(self, data, paginator, page, **params):
+        return {
+            "count": paginator.count,
+            "results": data,
+        }
 
 class MessageSchema(Schema):
     message: str

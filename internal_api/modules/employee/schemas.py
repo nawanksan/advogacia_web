@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 from ninja import Field, FilterSchema, ModelSchema, Schema
-from internal_api.modules.address.schemas import AddressInPost, AddressInPut
+from internal_api.modules.address.schemas import AddressInPost, AddressInPut, AddressOut
 from internal_api.modules.employee.models import Employee, Role
 
 class RoleFilter(FilterSchema):
@@ -79,6 +79,11 @@ class RoleOut(ModelSchema):
             'last_modification',
             'registration'
         ]
+        
+class RoleGetIdName(Schema):
+    id: int = Field(..., description='ID do cargo')
+    name: str = Field(..., description='Nome do cargo')
+    
 
 
 class EmployeeList(Schema):
@@ -121,50 +126,28 @@ class EmployeeFilter(FilterSchema):
         description='Está ativo?',
     )
 
-class EmployeeOutSchema(Schema):
-    id: int = Field(
-        ...,
-        description='ID do funcionário'
-    )
-    full_name: str = Field(
-        ...,
-        description='Nome completo'
-    )
-    cpf: str = Field(
-        ...,
-        description='CPF'
-    )
-    email: str = Field(
-        ...,
-        description='Email'
-    )
-    birth_date: date = Field(
-        ...,
-        description='Data de aniversário'
-    )
-    oab: str = Field(
-        None,
-        description='OAB do advogado'
-    )
-    oab_status: str = Field(
-        None,
-        description='Status do OAB'
-    )
-    type: str = Field(
-        ...,
-        description=('tipo de usuario')
-    )
-    specialty: str = Field(
-        None,
-        description='Status do OAB'
-    )
-    is_active: bool = Field(
-        ...,
-        description='Está ativo?'
-    )
+class EmployeeOutSchema(ModelSchema):
+    
+    address: Optional[AddressOut] = Field(..., description='Endereço')
+    role: Optional[RoleGetIdName] = Field(..., description='Cargo')
+    username: Optional[str] = Field(None, description='Nome de usuário')
+    
+
+    @staticmethod
+    def resolve_username(obj):
+        if hasattr(obj, 'user_employee_employee'):
+            return obj.user_employee_employee.username
+        return None
+
+    class Meta:
+        model = Employee
+        exclude = [
+            'last_modification',
+            'registration',
+        ]
 
 class EmployeeInPost(ModelSchema):
-    username: str = Field(None, description='Nome de usuário')
+    username: Optional[str] = Field(None, description='Nome de usuário')
     role_id: int = Field(..., description='ID do cargo')
     oab: Optional[str] = Field(
         None,
@@ -177,6 +160,10 @@ class EmployeeInPost(ModelSchema):
     specialty: Optional[str] = Field(
         None,
         description='Especialidade do advogado'
+    )
+    cellphone: Optional[str] = Field(
+        None,
+        description="Numero de celular"
     )
     address: AddressInPost = Field(
         ...,
@@ -192,9 +179,6 @@ class EmployeeInPost(ModelSchema):
         exclude = [
             'id',
             'role',
-            'oab_status',
-            'oab',
-            'specialty',
             'is_active',
             'last_modification',
             'registration'

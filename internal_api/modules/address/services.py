@@ -372,9 +372,9 @@ class AddressService(Service):
     def validate_payload(cls, *, payload: Dict[str, Any], id: Optional[int] = None):
 
         street_name = remove_excess_spaces(payload.get("street_name", "")).upper()
-        number = payload.get("number")
+        number: int = payload.get('number', 0)
         postal_code = remove_excess_spaces(payload.get("postal_code", ""))
-        neighbordhood_id = payload.get("neighbordhood_id")
+        neighbordhood_id = payload.get('neighbordhood_id')
         
         
         status_code, neighbordhood_or_message = NeighborhoodService.get(
@@ -390,11 +390,17 @@ class AddressService(Service):
                 "message": "Nome da rua não pode ser vazio."
             }
 
-        if not number | number < 1:
+        if not number:
             return status.HTTP_400_BAD_REQUEST, {
                 "message": (
-                    "Número é obrigatório e não"
-                    "pode ser menor que 1."
+                    "Número de endereço é obrigatório"
+                )
+            }
+            
+        if number < 1:
+            return status.HTTP_400_BAD_REQUEST, {
+                "message": (
+                    "Número não pode ser menor que 1."
                 )
             }
 

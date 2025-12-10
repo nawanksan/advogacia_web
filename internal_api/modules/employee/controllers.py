@@ -26,7 +26,6 @@ class EmployeeController(Controller):
 
         return self.service.list(filters=filters)
     
-
     @route.get(
         '/{int:id}',
         response={

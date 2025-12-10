@@ -47,7 +47,7 @@ class UserService(Service):
                 
                 instance = cls.repository.post(
                     payload={
-                        'usernamed':payload.get('username'),
+                        'username':payload.get('username'),
                         'employee_id':employee.id,
                         'password': password
                     }

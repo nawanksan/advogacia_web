@@ -27,9 +27,9 @@ class EmployeeService(Service):
     ) -> Tuple[int, Optional[models.Model | Dict[str, str]]]:
         status_code: int
         message: Dict
-        employee: Optional[models.Model]
+        employee: Optional[models.Model] = None
         full_name: str = remove_excess_spaces(
-            payload.get('full_name', '')
+            payload.get('full_name', '').upper()
         )
         cpf: str = remove_excess_spaces(
             payload.get('cpf')
@@ -38,21 +38,41 @@ class EmployeeService(Service):
             payload.get('email', '')
         )
         birth_date: str = payload.get('birth_date', '')
-        cellphone: str = payload.get('cellphone', '')
+        cellphone: str = remove_excess_spaces(payload.get('cellphone', ''))
         oab: Optional[str] = payload.get('oab', '')
         oab_status: Optional[str] = payload.get('oab_status', '')
         specialty: Optional[str] = payload.get('specialty', '')
+        username: Optional[str] = remove_excess_spaces(payload.get('username', ''))
+        is_system_user = payload.get('is_system_user', False)
+        print('user', username)
+        print('is_system', is_system_user)
         
-        # status_code, role_or_message = RoleService.get(
-        #     id=payload.get('role_id', None)
-        # )
-        # if status_code != status.HTTP_200_OK:
-        #     message = role_or_message
-        #     return status_code, message
+        if not is_system_user and username != "":  # noqa: PLC1901
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': (
+                    'Não é possível informar um nome de usuário '
+                    'para um funcionário que não é usuário do sistema.'
+                )
+            }
+            
+        if is_system_user and username == "" :  # noqa: PLC1901
+            return status.HTTP_400_BAD_REQUEST, {
+                'message': (
+                    'informe o nome de usuário'
+                )
+            }
+        
+        status_code, role_or_message = RoleService.get(
+            id=payload.get('role_id', None)
+        )
+        if status_code != status.HTTP_200_OK:
+            message = role_or_message
+            return status_code, message
 
-        # role: Any = role_or_message
+        role: Any = role_or_message
         filter_by_cpf: Any = cls.list().filter(cpf=cpf, is_active=True)
         filter_by_email: Any = cls.list().filter(email=email, is_active=True)
+        filter_by_username: Any = UserService.list().filter(username=username)
         
         if id is not None:
             status_code, employee_or_message = cls.get(id=id)
@@ -85,6 +105,15 @@ class EmployeeService(Service):
                     )
                 }
                 
+            if (
+                payload.get('role_id') != employee.role_id
+            ) and not role.is_active:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': (
+                        'Cargo não está disponível.'
+                    )
+                }
+                
         else:
             if filter_by_cpf.exclude(id=id).exists():
                 return status.HTTP_400_BAD_REQUEST, {
@@ -99,42 +128,49 @@ class EmployeeService(Service):
                         'Já existe um cadastro com o e-mail informado'
                     )
                 }
+                
+            if not role.is_active:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Cargo não está disponível.'
+                }
+                
+        if oab != "":
 
-        if not full_name:
+            if not oab_status:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'O status do OAB é obrigatório'
+                }
+
+            if not specialty:
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'A especialidade do advogado é obrigatória'
+                }
+
+        if full_name == "":
             return status.HTTP_400_BAD_REQUEST, {
-                'message': 'Informa a data de aniversário'
+                'message': 'Informe o nome completo do funcionário.'
             } 
         
         if not birth_date:
             return status.HTTP_400_BAD_REQUEST, {
-                'message': 'Informa a data de aniversário'
+                'message': 'Informe a data de aniversário'
             }
             
         if not email:
             return status.HTTP_400_BAD_REQUEST, {
-                'message': 'Informa o email de aniversário'
+                'message': 'Informe o e-mail'
             }
         
-        if cellphone > 11:
+        if cellphone and len(cellphone) != 11:
             return status.HTTP_400_BAD_REQUEST, {
-                'message': 'O número de contato'
-                ' deve ter no máximo 11 caracteres'
+                'message': (
+                    'O número de contato'
+                    ' deve ter no máximo 11 caracteres'
+                )
             }
-        
-        # if oab_status == in ['IN', 'SU']:
-        #     return status.HTTP_400_BAD_REQUEST, {
-        #         'message': 'o OAB inválido'
-        #     }
-        return status.HTTP_200_OK, employee
-    
-    # @classmethod
-    # def list(cls, *, filters: Optional[Any] = None):
-    #     queryset = super().list(filters=filters)
 
-    #     return {
-    #         "count": queryset.count(),
-    #         "results": list(queryset)
-    #     }
+        return status.HTTP_200_OK, employee
+
     
     @classmethod
     def post(
@@ -150,8 +186,9 @@ class EmployeeService(Service):
         try:
             with transaction.atomic():
                 status_code: int
-                message_or_object: str
+                message_or_object: Union[Dict, Any]
                 address_payload: Dict = payload.pop('address', {})
+                is_system_user: bool = payload.get('is_system_user', False)
 
                 # request = kwargs.get('request', None)
 
@@ -161,12 +198,14 @@ class EmployeeService(Service):
 
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
-                    return message
-                
-                status_code, message_or_object = AddressService.validate_payload(
-                    payload=address_payload
+                    return status_code, message
+
+                status_code, message_or_object = (
+                    AddressService.validate_payload(
+                        payload=address_payload
+                    )
                 )
-                
+
                 if status_code != status.HTTP_200_OK:
                     message = message_or_object
                     return status_code, message
@@ -175,33 +214,33 @@ class EmployeeService(Service):
                     payload=address_payload
                 )
 
-                if status_code != status.HTTP_200_OK:
+                if status_code != status.HTTP_201_CREATED:
                     message = message_or_object
                     return status_code, message
                 
                 post_address: Any = message_or_object
 
-                username: str = payload.pop('username')
-                is_system_user: bool = payload.get('is_system_user', False)
-
+                username: str = payload.pop('username','')
                 payload['address_id'] = post_address.id
                 instance = EmployeeRepository.post(
                     payload=payload
                 )
 
-                if is_system_user and username != '':
+                if is_system_user and username != "":
+
                     status_code, message_or_object = UserService.post(
                         employee=instance,
-                        payload={'usename': username}
+                        payload={'username': username}
                     )
                     
-                    post_username: Any = message_or_object
-                    
-                    instance.username = post_username
 
-                    if status_code != status.HTTP_200_OK:
+                    if status_code != status.HTTP_201_CREATED:
                         message = message_or_object
                         return message
+
+                    post_user: Any = message_or_object
+                    
+                    instance.username = post_user.username
 
                 return status.HTTP_201_CREATED, instance
 

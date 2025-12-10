@@ -55,6 +55,10 @@ class Employee(AbstractBaseModel):
         null=True,
         blank=True
     )
+    is_system_user: models.BooleanField = models.BooleanField(
+        verbose_name=_('Is System User'),
+        default=False,
+    )
     role: models.ForeignKey = models.ForeignKey(
         to='employee.Role',
         on_delete=models.RESTRICT,
