@@ -16,7 +16,7 @@ class EmployeeService(Service):
     """
 
     repository = EmployeeRepository
-    
+
     @classmethod
     def validate_payload(
         cls,
@@ -44,8 +44,8 @@ class EmployeeService(Service):
         specialty: Optional[str] = payload.get('specialty', '')
         username: Optional[str] = remove_excess_spaces(payload.get('username', ''))
         is_system_user = payload.get('is_system_user', False)
-        print('user', username)
-        print('is_system', is_system_user)
+        # print('user', username)
+        # print('is_system', is_system_user)
         
         if not is_system_user and username != "":  # noqa: PLC1901
             return status.HTTP_400_BAD_REQUEST, {
@@ -54,14 +54,14 @@ class EmployeeService(Service):
                     'para um funcionário que não é usuário do sistema.'
                 )
             }
-            
+
         if is_system_user and username == "" :  # noqa: PLC1901
             return status.HTTP_400_BAD_REQUEST, {
                 'message': (
                     'informe o nome de usuário'
                 )
             }
-        
+
         status_code, role_or_message = RoleService.get(
             id=payload.get('role_id', None)
         )
@@ -104,7 +104,7 @@ class EmployeeService(Service):
                         'Já existe um cadastro com o e-mail informado'
                     )
                 }
-                
+
             if (
                 payload.get('role_id') != employee.role_id
             ) and not role.is_active:
@@ -113,7 +113,7 @@ class EmployeeService(Service):
                         'Cargo não está disponível.'
                     )
                 }
-                
+
         else:
             if filter_by_cpf.exclude(id=id).exists():
                 return status.HTTP_400_BAD_REQUEST, {
@@ -128,12 +128,20 @@ class EmployeeService(Service):
                         'Já existe um cadastro com o e-mail informado'
                     )
                 }
-                
+
             if not role.is_active:
                 return status.HTTP_400_BAD_REQUEST, {
                     'message': 'Cargo não está disponível.'
                 }
-                
+
+        if (
+                filter_by_username.exists()
+                and username != employee.user_employee_employee.username
+            ):
+                return status.HTTP_400_BAD_REQUEST, {
+                    'message': 'Nome de usuário já cadastrado.'
+                }
+
         if oab != "":
 
             if not oab_status:
@@ -160,7 +168,7 @@ class EmployeeService(Service):
             return status.HTTP_400_BAD_REQUEST, {
                 'message': 'Informe o e-mail'
             }
-        
+
         if cellphone and len(cellphone) != 11:
             return status.HTTP_400_BAD_REQUEST, {
                 'message': (
@@ -221,6 +229,7 @@ class EmployeeService(Service):
                 post_address: Any = message_or_object
 
                 username: str = payload.pop('username','')
+
                 payload['address_id'] = post_address.id
                 instance = EmployeeRepository.post(
                     payload=payload
