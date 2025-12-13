@@ -10,7 +10,8 @@ from internal_api.modules.core.token.controllers import TokenJWTControllers
 from ninja_extra import NinjaExtraAPI
 
 # CUSTOM AUTH IMPORTS:
-from internal_api.modules.core.main.auth import JWTAuth
+# from internal_api.modules.core.main.auth import JWTAuth
+from ninja_jwt.authentication import JWTAuth
 
 from internal_api.modules.core.users.controllers import UserController
 from django.contrib.admin.views.decorators import  staff_member_required

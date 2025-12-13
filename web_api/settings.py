@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'internal_api.modules.address',
     'internal_api.modules.case',
     'internal_api.modules.employee',
-    'internal_api.modules.business',
+    'internal_api.modules.business'
 ]
 
 MIDDLEWARE = [
