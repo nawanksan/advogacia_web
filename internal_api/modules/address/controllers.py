@@ -4,7 +4,33 @@ from django.db.models import QuerySet
 from ninja import Query
 
 
-from internal_api.modules.address.schemas import AddressFilter, AddressInPost, AddressInPut, AddressList, AddressOut, CityFilter, CityInPost, CityInPut, CityList, CityOut, CountryFilter, CountryInPost, CountryInPut, CountryList, CountryOut, FederativeUnitFilter, FederativeUnitInPost, FederativeUnitInPut, FederativeUnitList, FederativeUnitOut, NeighborhoodFilter, NeighborhoodInPost, NeighborhoodInPut, NeighborhoodList, NeighborhoodOut
+from internal_api.modules.address.schemas import (
+    AddressFilter,
+    AddressInPost,
+    AddressInPut,
+    AddressList,
+    AddressOut,
+    CityFilter,
+    CityInPost,
+    CityInPut,
+    CityList,
+    CityOut,
+    CountryFilter,
+    CountryInPost,
+    CountryInPut,
+    CountryList,
+    CountryOut,
+    FederativeUnitFilter,
+    FederativeUnitInPost,
+    FederativeUnitInPut,
+    FederativeUnitList,
+    FederativeUnitOut,
+    NeighborhoodFilter,
+    NeighborhoodInPost,
+    NeighborhoodInPut,
+    NeighborhoodList,
+    NeighborhoodOut
+)
 from internal_api.modules.address.services import AddressService, CityService, CountryServices, FederativeUnitService, NeighborhoodService
 from internal_api.modules.core.main.schemas import CustomPagination, MessageSchema, PaginatedResponseSchema
 from internal_api.modules.core.utils.classes import Controller
@@ -85,6 +111,7 @@ class CountryController(Controller):
         #     GetAddressesAccess,
         # ],
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -103,6 +130,7 @@ class CountryController(Controller):
         },
         # permissions=[PostAddressesAccess],
     )
+    @paginate(CustomPagination)
     def post(self, request, payload: CountryInPost) -> Tuple[Any, ...]:
         """
         Rota responsável por criar um país.
@@ -122,6 +150,7 @@ class CountryController(Controller):
         },
         # permissions=[PutAddressesAccess],
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -147,6 +176,7 @@ class CountryController(Controller):
         },
         # permissions=[DisabledAddressesAccess],
     )
+    @paginate(CustomPagination)
     def disable(
         self,
         request,
@@ -186,6 +216,7 @@ class FederativeUnitController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -201,6 +232,7 @@ class FederativeUnitController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def post(
         self,
         request,
@@ -218,6 +250,7 @@ class FederativeUnitController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -237,6 +270,7 @@ class FederativeUnitController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def desable(
         self,
         request,
@@ -272,6 +306,7 @@ class CityController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -287,6 +322,7 @@ class CityController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def post(
         self,
         request,
@@ -304,6 +340,7 @@ class CityController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -323,6 +360,7 @@ class CityController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def desable(
         self,
         request,
@@ -357,6 +395,7 @@ class NeighborhoodController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -372,6 +411,7 @@ class NeighborhoodController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def post(
         self,
         request,
@@ -389,6 +429,7 @@ class NeighborhoodController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -408,6 +449,7 @@ class NeighborhoodController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def desable(
         self,
         request,
@@ -442,6 +484,7 @@ class AddressController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -457,6 +500,7 @@ class AddressController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def post(
         self,
         request,
@@ -474,6 +518,7 @@ class AddressController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,

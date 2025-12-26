@@ -33,6 +33,7 @@ class EmployeeController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -47,6 +48,7 @@ class EmployeeController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def post(
         self,
         request,
@@ -65,6 +67,7 @@ class EmployeeController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -85,6 +88,7 @@ class EmployeeController(Controller):
             ERROR_STATUSES: MessageSchema,
         }
     )
+    @paginate(CustomPagination)
     def desable(
         self,
         request,
@@ -165,6 +169,7 @@ class RoleController(Controller):
         #     | PutRolesPermissionsAccess,
         # ],
     )
+    @paginate(CustomPagination)
     def get(
         self,
         id: int,
@@ -183,6 +188,7 @@ class RoleController(Controller):
         },
         # permissions=[PostRolesAccess],
     )
+    @paginate(CustomPagination)
     def post(self, request, payload: RoleInPost) -> Tuple[Any, ...]:
         """
         Rota responsável por criar um cargo de funcionário.
@@ -201,6 +207,7 @@ class RoleController(Controller):
         },
         # permissions=[PutRolesAccess],
     )
+    @paginate(CustomPagination)
     def put(
         self,
         request,
@@ -225,6 +232,7 @@ class RoleController(Controller):
         },
         # permissions=[DisableRolesAccess],
     )
+    @paginate(CustomPagination)
     def disable(
         self,
         request,
